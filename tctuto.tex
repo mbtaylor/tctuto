@@ -1,0 +1,980 @@
+\documentclass{article}
+
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{xcolor}
+\usepackage{url}
+% \usepackage{parskip}
+
+\setlength{\unitlength}{1cm}
+
+
+% Fixes problem with includegraphics images screwing up colours on their
+% page in the output PDF.  I have no idea *how* it fixes it mind.
+\pdfpageattr {/Group << /S /Transparency /I true /CS /DeviceRGB>>}
+
+\pagestyle{plain}
+
+\setlength{\topmargin}{-3cm}
+\setlength{\textheight}{25.5cm}
+\setlength{\oddsidemargin}{-2.0cm}
+\setlength{\evensidemargin}{-2.0cm}
+\setlength{\textwidth}{20cm}
+
+\definecolor{brown}{rgb}{0.5,0.25,0.0}
+\definecolor{grey}{rgb}{0.6,0.6,0.6}
+
+\newcommand{\buttimg}[1]
+           {\mbox{\vtop{\vskip-2ex\hbox{\includegraphics[height=3ex]{#1}}}}}
+\newcommand{\winfig}[2]
+           {\vspace*{-0.5cm}
+            \hspace*{0.5cm}\mbox{\vtop{\hbox{\includegraphics[#1]{#2}}}}}
+\newcommand{\lab}[1]{{\bf #1}}
+\newcommand{\ma}[2]{\buttimg{#1}~\lab{#2}}
+\newcommand{\mb}[3]{\buttimg{#1}~\lab{#2}$\mid$\lab{#3}}
+\newcommand{\entry}[2]{\lab{#1}: ``{\tt #2}''}
+\newcommand{\turl}[1]{{\color{blue}\url{#1}}}
+\newcommand{\paragap}{\vspace{1.5ex}}
+
+\begin{document}
+\raggedright
+
+\title{Tutorial: Exploring Gaia data with TOPCAT and STILTS}
+\author{Mark Taylor,\\
+        University of Bristol,\\
+        m.b.taylor@bristol.ac.uk}
+\date{\vspace*{-4ex}}  %  git date used in footer instead
+
+\maketitle
+
+\begin{description}
+  \item[TOPCAT:] \turl{http://www.starlink.ac.uk/topcat/}
+  \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
+  \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
+\end{description}
+\tableofcontents
+
+\vspace*{2cm}
+\begin{center}
+  \color{grey}
+  {\tt \input{version}}
+\end{center}
+
+\newpage
+
+This tutorial uses data from Gaia DR2 \cite{dr2} to lead you
+through some of the capabilities of TOPCAT and STILTS.
+
+For best results, you should have the manuals to hand:
+\url{http://www.starlink.ac.uk/topcat/sun253/} and
+\url{http://www.starlink.ac.uk/stilts/sun256/}.
+
+\section{Cluster identification \#1: Messier 4 in proper motion space}
+
+\begin{minipage}[t]{11cm}
+In this example we will determine the mean parallax of
+the stars in the globular cluster Messier 4 (M4, or NGC 6121).
+
+\subsection{Acquire Gaia data in the M4 region}
+\label{sec:m4-cone}
+
+  \raggedright
+  \begin{enumerate}
+  \item Open the \mb{CONE_DIALOG.png}{VO}{Cone Search} window \\
+        (i.e.\ use the \lab{Cone Search} submenu of the \lab{VO} menu
+         in the main topcat window)
+  \item Fill in \entry{Keywords}{gaia dr2}, and hit \lab{Find Services}
+  \item There are a few options, that should mostly give simlar results.
+        {\tt ARI-Gaia} (probably the top one) is a good choice.
+        Select it by clicking on it, and the
+        partial URL of the service appears in the \lab{Cone URL} field
+  \item \entry{Object Name}{M4}, hit \lab{Resolve} to fill in
+        sky position fields
+  \item \entry{Radius}{0.3} (degrees)
+  \item Hit \lab{OK};
+        new table is loaded into topcat main control window,
+        with about 50\,000 rows
+  \item Use the \mb{skyplot_button.png}{Graphics}{Sky Plot} window
+        to see the positions on the sky
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{m4_cone.png}
+\end{minipage}
+
+\subsection{Identify comoving cluster}
+\label{sec:blob}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Plot sources in proper motion space: \\
+        \mb{planeplot_button.png}{Graphics}{Plane Plot} window, \\
+        \entry{X}{pmra}, \entry{Y}{pmdec}
+  \item Note overdensity far from (0,0);
+        use mouse to navigate \\
+        (click little \buttimg{navig_help.png} button at bottom left
+        for navigation help)
+  \item Graphically select this comoving cluster as new Subset:
+        \mb{blob_button.png}{Subsets}{Draw Subset Region} button, \\
+        drag mouse around cluster, hit \buttimg{unblob_button} button again
+  \item A \lab{New Subset} dialogue pops up:
+        fill in \entry{New Subset Name}{comoving}, \lab{Add New Subset}
+  \item Look in \lab{Subsets} tab of plot window;
+        turn \lab{All} and \lab{comoving} subsets off/on
+  \item Look in \mb{subsets_button.png}{Views}{Row Subsets} window
+        to see new subset
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{m4_pmplot.png}
+\end{minipage}
+
+\subsection{Examine cluster members}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Go back to the \mb{skyplot_button.png}{Graphics}{Sky Plot}
+        from section \ref{sec:m4-cone} (or open a new one)
+  \item In \lab{Subsets} tab turn \lab{All} and \lab{comoving} subsets on/off
+  \item Plot the proper motions.
+        In the \lab{Form} tab, use the \ma{Plus1.png}{Forms} menu
+        and select the \ma{ADD_FORM_VECTOR.png}{Add SkyVector} item,
+        with \entry{Delta Longitude}{pmra},
+             \entry{Delta Latitude}{pmdec}.
+        The arrows will initially be much too long (units of degrees);
+        you will have to set \entry{Unit}{scaled} (auto-scaling),
+        then adjust to taste with the \lab{Scale} slider.
+        Zoom in so you can see some individual objects.
+        All the cluster objects have similar proper motions,
+        non-cluster ones have various directions, or none (no measured P.M.).
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{m4-vector.png}
+\end{minipage}
+
+\subsection{Determine parallax}
+\label{sec:histo-mean}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Plot histogram of parallaxes: \\
+        \mb{histo_button.png}{Graphics}{Histogram Plot}, \\
+        \entry{X}{parallax}
+  \item In \lab{Subsets} tab, make sure only subset \lab{comoving},
+        and not \lab{All}, is plotted
+  \item If necessary, rescale plot
+        (\buttimg{rescale_button.png} or navigate with mouse)
+  \item Fit Gaussian to data:
+        \ma{Plus1.png}{Forms} menu in \lab{Form} tab,
+        \ma{ADD_FORM_GAUSSIAN}{Gaussian} option.
+  \item Scroll to bottom of Gaussian layer description in \lab{Form} tab,
+        and read off parallax mean and S.D.
+  \item Invert to get distance to cluster
+        (1000/parallax in mas = distance in parsec).
+  \end{enumerate}
+
+  {\bf Note: careful when inverting parallaxes!}\\
+  In general $r = 1/\varpi$ is {\em not reliable\/}
+  because of errors.
+  It's OK here because we are averaging over many measurements.
+  Rule of thumb for single measurements:
+  if $\varpi/\sigma_\varpi>5$ it's probably OK.
+  See Luri et al.\ 2018 \cite{luri} for full discussion.
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{m4-parallax.png}
+\end{minipage}
+
+\newpage
+
+\section{Cluster identification \#2: Hyades in phase space}
+
+This example locates the Hyades in 3-dimensional velocity space,
+using Gaia's radial velocity observations.
+We can't start this time by making a positional query (cone search),
+since the Hyades is very delocalised on the sky (because it's so close).
+So we need to make a more sophisticated query using TAP.
+
+\subsection{Locate Gaia TAP service}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+
+  \begin{enumerate}
+  \item Open the TAP window: \\
+        \mb{tap_button.png}{VO}{Table Access Protocol (TAP) Query}
+  \item Fill in \entry{Keywords}{gaia} and hit \lab{Find Services} button
+  \item There are several services with Gaia data in various forms;
+        \lab{GAIA} (ESA) or \lab{ARI-Gaia} (Heidelberg) are good choices.
+        The service URL appears in the field at the bottom of the window.
+  \item Hit the \lab{Use Service} button at the bottom
+  \end{enumerate}
+
+  \subsection{Explore the TAP service}
+
+  Use the TAP window to explore the tables that are present and
+  their metadata.
+  \begin{enumerate}
+  \item Browse the table list on the left,
+        The tables in the {\tt gaiadr2} schema are the ones with Gaia DR2 data.
+  \item Select table {\tt gaiadr2.gaia\_source} and look at
+        \lab{Table} and \lab{Columns} tabs,
+        to see information about available columns.
+  \item Look in the \lab{Service} tab to see information about the service
+  \item Look in the \lab{Hints} tab for a very basic ADQL cheat sheet
+  \item Type in some very simple ADQL:\\
+        ``{\tt SELECT TOP 10 ra, dec FROM gaiadr2.gaia\_source}''
+  \item Note that syntax errors (including partial or misspelt tables/columns)
+        are highlighted in red.
+  \item Hit \lab{Run Query} to run the query;
+        if successful a new table is loaded
+  \end{enumerate}
+
+  \subsection{Acquire astrometric data}
+
+  In the TAP window, execute this query:
+  \begin{verbatim}
+    SELECT ra, dec, pmra, pmdec, parallax, radial_velocity,
+           bp_rp,
+           phot_g_mean_mag + 5*log10(parallax/100) as g_abs
+    FROM gaiadr2.gaia_source
+    WHERE parallax > 15
+    AND parallax_over_error > 5
+      AND radial_velocity IS NOT NULL
+  \end{verbatim}
+  \vspace*{-2ex}
+  The result should contain about 26\,000 rows.
+  \paragap
+
+  The query is for all the nearby sources
+  (nominally within 1000/15 $\approx$ 66\,parsec)
+  with radial velocities (only about 7 million DR2 sources have RV)
+  and good determinations of parallax.
+  The fact that parallax error is $\leq$20\% means that it's OK
+  to invert parallax to get distance.
+  We are retrieving all the basic astrometric parameters and some
+  photometry.
+  \paragap
+
+  The Hyades should be in there somewhere.
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hy_tapsel.png}
+
+  \vspace*{2cm}
+
+  \winfig{width=8cm}{hy_tapex.png}
+\end{minipage}
+
+
+\newpage
+
+\subsection{Calculate 3-d velocity components}
+
+We have the astrometric quantities measured by Gaia,
+and want to turn them into coordinates in 3-d phase space.
+TOPCAT's {\em expression language\/} can help.
+\vspace*{3ex}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Open the \mb{fx_button}{Help}{Available Functions} browser to see
+        what functions TOPCAT provides (they are listed in the manual too).
+  \item Look under the \lab{Gaia} option to see astrometry-specific items
+  \item We will use {\tt astromUVW} and maybe {\tt astromXYZ} functions.
+        The \lab{Examples} items in the function documentation are useful;
+        for use with the {\tt gaia\_source} catalogue,
+        you can often just cut and paste.
+  \item Open the \mb{cols_button.png}{Views}{Column Info} window
+        and choose the \mb{plus_button.png}{Columns}{New Synthetic Column}
+        menu item
+  \item Create a new column giving Cartesian velocity components:
+        \entry{Name}{uvw},
+        \entry{Expression}
+          {astromUVW(array(ra, dec, parallax, pmra, pmdec, radial\_velocity))},
+        \entry{Units}{km/s}
+        That gives velocities along ICRS axes.
+        If you want it in Galactic coordinates, wrap the whole expression
+        in the {\tt icrsToGal(...)} function.
+  \item Look at the new column in the \mb{browser1.png}{Views}{Data Window}.
+        It is a 3-element array; you can get the array elements
+        using expressions {\tt uvw[0]}, {\tt uvw[1]}, {\tt uvw[2]}
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hy_coldef.png}
+\end{minipage}
+
+\subsection{Identify Hyades graphically in 3-d velocity space}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Plot points in 3-d space:
+        \mb{plot2cube.png}{Graphics}{Cube Plot},
+        \entry{X}{uvw[0]},
+        \entry{Y}{uvw[1]},
+        \entry{Z}{uvw[2]}.
+        Note, you can type in any expression for the plot coordinates,
+        you don't have to just select from available columns.
+        The {\tt uvw} column itself doesn't appear in the selection list,
+        since it's not a scalar.
+  \item Select \entry{Mode}{\buttimg{MODE_DENSITY.png}density}
+        in the \lab{Form} tab.
+  \item Now, navigate through the cube to find an overdensity.
+        This takes a bit of practice, but it's fun once you work out how.
+        Click the little \buttimg{navig_help.png} button at bottom left
+        for navigation help;
+        the most useful actions are mouse wheel
+        (2-fingered up/down drag on some trackpads) to zoom,
+        and right click on a dense region to recenter.
+  \item Navigate so only the objects in the overdense region are
+        visible inside the wireframe - these are the Hyades.
+  \item Use \mb{spoints5.png}{Subsets}{New Subset From Visible},
+        \entry{Name}{hyades}, \lab{Add Subset}.
+  \item Go back and plot this subset on the sky
+        (\mb{skyplot_button.png}{Graphics}{Sky Plot}),
+        or in 3-d space
+        (\mb{plot2sphere.png}{Graphics}{Sphere Plot},
+         \entry{Lon}{ra},
+         \entry{Lat}{dec},
+         \entry{Radius}{1000./parallax})
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hy_phase.png}
+\end{minipage}
+
+\newpage
+\subsection{Colour-magnitude diagram}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Plot a colour-magnitude diagram:
+        \mb{planeplot_button.png}{Graphics}{Plane Plot}, \\
+        \entry{X}{bp\_rp}, \entry{Y}{g\_abs}.
+        Use the \buttimg{axes_button.png} \lab{Axes} control,
+        \lab{Coords} tab, \lab{Y~Flip} checkbox
+        to flip it the right way round.
+  \item Hyades sit on a nice tight main sequence!
+  \item There are a few outliers.
+        Click on them, see the position show up in the sky plot too.
+        In some cases, you can see by sky position that they are non-members.
+  \end{enumerate}
+
+  \subsection*{Bonus}
+  \begin{itemize}
+    \item Can you find any other clusters in velocity space?
+    \item Try refining the selection by localising in position space too.
+    \item What is the mean distance to the Hyades?
+  \end{itemize}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hy_cmd.png}
+  \\[1cm]
+  \winfig{width=8cm}{hy_sky.png}
+\end{minipage}
+
+\newpage
+\section{Match Gaia and HST observations}
+
+In this example we have a local catalogue from a publication
+by Gouliermis et al. 2006 \cite{gouliermis},
+available in VizieR as J/ApJS/166/549.
+This contains about 100\,000 sources observed by the ACS instrument
+on the Hubble Space Telescope at epoch $\approx$ J2004.6
+of stars in NGC346, a cluster in the Small Magellanic Cloud.
+We match these positions with positions in the main Gaia catalogue at
+J2015.5.
+
+\subsection{Acquire HST observations}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  There are various ways to do this, but here
+  we will use TOPCAT's VizieR dialogue window,
+  which talks directly to the VizieR catalogue service.
+  \begin{enumerate}
+  \item Open \mb{vizier_button.png}{VO}{VizieR Catalogue Service} window
+  \item \entry{Object Name}{ngc346}, and \lab{Resolve} to fill in
+        \lab{RA} and \lab{Dec}
+  \item \entry{Radius}{1} (degrees)
+  \item \entry{Maximum Row Count}{100000} (or some large number)
+  \item Catalogue selection panel: \lab{By Keyword} tab
+  \item Fill in \entry{Keywords}{Gouliermis}
+  \item Select ``{\tt J/ApJS/166/549}''
+  \item Hit the \lab{OK} button at the bottom.
+        A new table with 99\,079 rows should be loaded
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \vspace*{-1cm}
+  \winfig{width=8cm}{n3_vizier.png}
+\end{minipage}
+
+
+\subsection{Crossmatch with Gaia}
+\label{sec:cdsxmatch}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  Now we want to find associations of the HST objects with sources
+  from Gaia DR2.
+  Use the CDS X-Match service from TOPCAT.
+  This uploads a local table to the CDS X-Match service,
+  where the match is made against the Gaia DR2 catalogue
+  (or any other catalogue in VizieR).
+  The resulting matched catalogue is then received as a new
+  table in TOPCAT.
+  \begin{enumerate}
+  \item Open the \mb{xmatch_button.png}{VO}{CDS Upload X-Match} window
+  \item Fill in the fields:\\
+        \entry{VizieR Table ID/Alias}{GAIA DR2} \\
+        \entry{Input Table}{J\_ApJS\_166\_549\_table2} \\
+        (or whatever the HST table is called) \\
+        \entry{RA column}{\_RAJ000}, \entry{Dec column}{\_DEJ2000}  \\
+        (should be filled in automatically) \\
+        \entry{Radius}{1} (arcsec) \\
+        \entry{Find Mode}{All}
+  \item Hit \lab{Go};
+        within a few seconds, it should inform you that a new table has been
+        loaded, with 22\,405 rows.
+  \item Look at the columns of the new table (all HST followed by all Gaia)
+        in the \mb{cols_button.png}{Views}{Column Info} window
+  \item View the new table in a \mb{skyplot_button.png}{Graphics}{Sky Plot}
+  \end{enumerate}
+Note: the match is done with Gaia coordinates rolled back
+(using Gaia proper motions) to J2000.0.
+These propagated columns are in the matched table as
+{\tt ra\_epoch2000}, {\tt dec\_epoch2000}.
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \vspace*{-0.5cm}
+  \winfig{width=8cm}{n3_cdsxmatch.png}
+\end{minipage}
+
+
+\subsection{Visualise the crossmatch}
+\label{sec:xmatch-plot}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Open a \mb{skyplot_button.png}{Graphics}{Sky Plot} window
+  \item Plot the HST observations:
+        \entry{Table}{J\_ApJS\_166\_549\_table2},
+        \entry{Lon}{\_RAJ2000}, \entry{Lat}{\_DEJ2000}
+  \item Overplot the actual matches.
+        Add a new {Pair} layer:
+        \mb{pairs_button.png}{Layers}{Add Pair Control} and fill in:\\
+        \entry{Table}{4xGAIA DR2}
+              (or whatever the xmatch result table is called)
+        and both sets of coordinates: \\
+        \entry{Lon(1)}{\_RAJ2000}, \entry{Lat(1)}{\_DEJ2000} (HST) \\
+        \entry{Lon(2)}{ra}, \entry{Lat(2)}{dec} (Gaia)
+  \item Zoom in to look at the associations.  There are too many!
+  \item You can fiddle around with the \label{Form} tab to make the
+        plot clearer, e.g. add a \ma{mark2_button.png}{Mark2} layer;
+        change marker size, shape or colour.
+  \end{enumerate}
+  Visualising the results of a crossmatch is very often a good
+  idea, unless you're pretty sure what you're going to get.
+  Here, you can see it was crucial to understand the results.
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \vspace*{-0.5cm}
+  \winfig{width=8cm}{n3_allmatch.png}
+\end{minipage}
+
+\subsection{Investigate and identify matches}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Add new columns giving RA/Dec discrepancies between HST and Gaia
+        positions: \\
+        Open \mb{cols_button.png}{Views}{Column Info} window, \\
+        then define new columns using
+        \mb{plus_button.png}{Columns}{New Synthetic Column}: \\
+        \entry{Name}{deltaRa}, \entry{Expression}{3600*(ra - \_RAJ2000)},
+                               \entry{Units}{arcsec} \\
+        \entry{Name}{deltaDec}, \entry{Expression}{3600*(dec - \_DEJ2000)},
+                                \entry{Units}{arcsec}
+  \item Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window, \\
+        plot \entry{X}{deltaRa}, \entry{Y}{deltaDec}
+  \item Identify overdense region, select as in section~\ref{sec:blob},
+        define new subset \lab{true\_match}.
+  \item Go back to the sky associations plot from the previous section,
+        and use the \lab{Subsets} tab to visualise which are the true matches.
+  \item Make a colour-colour diagram combining HST and Gaia photometry: \\
+        Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window,
+        plot \entry{X}{Vmag-Imag}, \entry{Y}{bp\_rp},
+        display \lab{true\_match} subset only. \\
+        What are the two populations?
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{n3_truematch.png}
+\end{minipage}
+
+
+\begin{minipage}[t]{11cm}
+
+  \subsection{Alternative crossmatch: use local files}
+  \raggedright
+  The crossmatch in section \ref{sec:cdsxmatch} was done by sending
+  a local file to an external service.
+  This is often an efficient way to do it, but there are other options.
+  Here, we will do the same crossmatch by operating on two local files
+  with positions covering the same sky region.
+  \begin{enumerate}
+  \item First, retrieve Gaia data in the region of interest.
+        Use the \mb{CONE_DIALOG.png}{VO}{Cone Search} window as in
+        section \ref{sec:m4-cone}, but this time fill in
+        \entry{Object Name}{ngc346}, \entry{Radius}{0.05} (degrees).
+  \item Plot the Gouliermis (from VizieR) and Gaia (from Cone Search)
+        datasets on the sky:
+        open the \mb{skyplot_button.png}{Graphics}{Sky Plot} window,
+        fill in RA and Dec as \lab{Lat} and \lab{Lon} for one of the tables,
+        then use the \mb{poscontrol_button.png}{Layers}{Add Position Control}
+        action to overplot the same thing for the other dataset.
+  \item Open the \mb{pairmatch_button.png}{Joins}{Pair Match} window
+        from the main control window.
+        Default \lab{Match Criteria} are OK in this case.
+        Fill in the \lab{Table 1} and \lab{Table 2} details for the
+        Gouliermis and Gaia tables.
+        Entry \entry{Match Selection}{All matches}.
+  \item Hit \lab{Go} and wait a few seconds for the match to complete.
+  \item When complete, a popup window will tell you, and offer to
+        \ma{matchplot2.png}{Plot Result}.
+        If you select this option, you will see a plot like the one from
+        section \ref{sec:xmatch-plot}, except that the unmatched Gaia
+        sources are also plotted (which can sometimes be useful information).
+  \end{enumerate}
+  Other matching options are available in the local match windows,
+  including identifying objects that don't match, matching internally
+  within a table, matching between three or more tables, etc.
+  Note that unlike most things in TOPCAT, crossmatching can take up
+  significant amounts of memory, so matching multi-million-row tables
+  can sometimes grind to a halt or fail.
+
+  \subsection*{Bonus}
+
+  \begin{itemize}
+  \item Use the \mb{histo_button.png}{Graphics}{Histogram Plot}
+        (as in section \ref{sec:histo-mean})
+        to find the mean values of {\tt deltaRa}, {\tt deltaDec} for
+        the true matches.
+        If these are non-zero, why?
+% \item Start up Aladin with all-sky mode and use SAMP to see image data
+%       for some of the matched objects.
+  \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.8\textwidth]{n3_samp.png}
+% \end{center}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{n3_skyboth.png}
+  \vspace*{1cm}
+
+  \winfig{width=8cm}{n3_pairmatch.png}
+\end{minipage}
+
+
+\newpage
+\section{Local Herzsprung-Russell Diagram}
+\label{sec:hrd}
+
+In this example we will use a TAP query to download
+all the nearby Gaia sources with good astrometry and photometry,
+and calculate their absolute magnitudes to construct an HR diagram,
+performing a couple of cleaning operations to improve the data.
+This procedure loosely follows
+Appendix~C of Lindegren et al.\ 2018 \cite{lindegren}.
+
+\subsection{Acquire data from TAP service}
+\label{sec:hrd-tap}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Open the TAP window
+        \mb{tap_button.png}{VO}{Table Access Protocol (TAP) Query}
+  \item Select one of the Gaia services (probably the ESA one)
+        and \lab{Use Service}
+  \item Choose \entry{Mode}{Asynchronous}
+        (just above the ADQL text entry panel).
+        This query may take a minute or two,
+        so a synchronous query might time out
+        (with result, probably, ``{\em TAP response is not a VOTable}'').
+  \item Execute the following query:
+\label{step:hrd-data}
+    \begin{verbatim}
+    SELECT ra, dec, parallax, phot_g_mean_mag, bp_rp,
+           astrometric_excess_noise,
+           phot_bp_rp_excess_factor
+    FROM gaiadr2.gaia_source
+    WHERE parallax > 10
+      AND parallax_over_error > 10
+      AND phot_bp_mean_flux_over_error > 10
+      AND phot_rp_mean_flux_over_error > 10
+    \end{verbatim}
+    \vspace*{-3ex}
+    You should get a table with 338\,833 sources;
+    they are nominally within 100\,pc, and have $\varpi$, BP and RP
+    with small errors.  In particular, the parallax error is small enough
+    that $\varpi^{-1}$ is a reasonable estimate of distance.
+  \end{enumerate}
+\end{minipage}
+
+\subsection{Plot HRD}
+\label{sec:plot-hrd}
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Add a new column calculating absolute G magnitude, using parallax:
+        \mb{plus_button.png}{Columns}{New Synthetic Column} in
+        \ma{cols_button.png}{Column Info} window:\\
+        \entry{Name}{g\_abs}, \\
+        \entry{Expression}{phot\_g\_mean\_mag + 5*log10(parallax/100)}, \\
+        \entry{Units}{mag}
+        \label{item:calc-absmag}
+  \item Make a \mb{planeplot_button.png}{Graphics}{Plane Plot}, with
+        \entry{X}{bp\_rp} ($BP-RP$ colour), \entry{Y}{g\_abs}
+        (absolute G magnitude).
+        Use the \buttimg{axes_button.png} \lab{Axes} control,
+        \lab{Coords} tab, \lab{Y~Flip} checkbox
+        to flip it the right way round.
+        Structure visible, but lots of interlopers.
+  \item Play around with different \lab{Shading Modes} in \lab{Form} tab.
+  \item Colour points using the other columns
+        using modes \lab{Aux}, \lab{Weighted}.
+        What's the difference between the two?
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \vspace*{-8cm}
+  \winfig{width=8cm}{hrd_excess.png}
+\end{minipage}
+
+\newpage
+\subsection{Exclude astrometrically suspect sources}
+\label{sec:hrd-astrom}
+
+\begin{enumerate}
+\item Try different weighting/aux columns to see which one can be used
+      to exclude points in the unwanted region between the main
+      sequence and white dwarf branch.
+\item Experiment with the colour map settings
+      (\ma{colours2.png}{Aux Axis} control)
+      to find a suitable threshold.
+\item Create a subset using an algebraic expression that excludes
+      the spurious points:
+      go to the \mb{subsets_button.png}{Views}{Row Subsets} window
+      and use the \mb{plus_button.png}{Subsets}{New Subset} action: 
+      \mbox{\entry{Subset Name}{astrom\_ok}},
+      \mbox{\entry{Expression}{astrometric\_excess\_noise $<$ 1}}
+\item Go back to the plot, and make sure only the {\tt astrom\_ok}
+      subset is plotted (\lab{Subsets} tab).
+      Now there are fewer spurious sources.
+\end{enumerate}
+The {\tt astrometric\_excess\_noise} column characterises the
+goodness of fit of the astrometric solution to the observations.
+But you didn't need to know that to improve the data like this.
+
+\subsection{Exclude photometrically suspect sources}
+\label{sec:hrd-photom}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \begin{enumerate}
+  \item Open a new \mb{planeplot_button.png}{Graphics}{Plane Plot}, with
+        \entry{X}{bp\_rp} ($BP-RP$ colour),
+        \entry{Y}{phot\_bp\_rp\_excess\_factor}.
+  \end{enumerate}
+  The quantity on the Y axis is some measure of photometric reliability.
+  High values are bad, but how high is colour-dependent.
+  We will define a region in this space to exclude the unusually high values.
+  This time we will interactively draw a polygon rather than a blob.
+  \begin{enumerate}
+  \setcounter{enumi}{1}
+  \item Click the \mb{poly2.png}{Subsets}{Draw Subset Polygon} action
+  \item Select \entry{Point inclusion mode}{BELOW} in the popup
+  \item Click on a few points above the overdense region until the shaded
+        area roughly covers it.
+  \item When you're done, click on the \buttimg{unpoly2.png} button again.
+  \item Fill in the \lab{Subset Name} field in the popup
+        (e.g. {\tt photom\_ok}) and hit \lab{OK}
+  \item Go to the \mb{subsets_button.png}{Views}{Row Subsets} window,
+        where you can see the new subset alongside {\tt astrom\_ok}.
+  \item Create a new subset combining the two: \\
+        \mb{plus_button.png}{Subsets}{New Subset} action: 
+        \entry{Subset Name}{ok} \\
+        \entry{Expression}{astrom\_ok \&\& photom\_ok}
+  \item Go back to the plot, and make sure only the {\tt ok}
+        subset is plotted (\lab{Subsets} tab).
+        Now there are fewer spurious sources.
+  \end{enumerate}
+  Leave this session open, we'll need some of it for the next section.
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hrd_photom.png}
+\end{minipage}
+
+\subsection{Explore the HRD}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  The photometry and astrometry in Gaia DR2 is so good that plotting
+  a Herzsprung-Russell Diagram by following the steps above gives
+  a lot of astrophysical information.
+  Identify the different populations with the help of the zoom and
+  shading options in TOPCAT: main sequence, giant branches,
+  the double-stranded white dwarfs sequence representing the
+  split between helium and hydrogen burning, and if you look
+  closely a notch in the main sequence near absolute G magnitude of 10
+  (Jao et al 2018 \cite{2018ApJ...861L..11J}).
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \vspace*{-1.5cm}
+  \winfig{width=8cm}{hrd_only.png}
+\end{minipage}
+
+\newpage
+
+\section{Local Herzsprung-Russell Diagram using STILTS}
+
+In this section we will reproduce the cleaned HRD from the previous section,
+but this time from the command line, though we will use some of the results
+of the earlier GUI activity.
+Using TOPCAT interactively to work out how to write STILTS scripts
+for later batch use like this is a common pattern of work.
+
+\subsection{Get STILTS running}
+
+\begin{enumerate}
+\item Unlike TOPCAT, you can't bluff your way through STILTS
+      by pointing'n'clicking; you'll need some documentation.
+      Find the manual here:
+      \begin{quote}
+        \turl{http://www.starlink.ac.uk/stilts/sun256/}
+      \end{quote}
+      or just google for ``stilts'' and go to the \lab{Documentaion} section.
+\item Make sure you have it installed.  If you have topcat, you can
+      run ``{\tt java -jar topcat-full.jar -stilts ...}''.
+      More convenient (on Un*x), download the {\tt stilts} script
+      into the same directory as {\tt topcat-full.jar} (or {\tt stilts.jar}).
+      We will write just ``{\tt stilts}'' from now on.
+\item Run a command:
+      \vspace*{-2ex}
+      \begin{verbatim}
+      stilts calc expression="1+2"
+      \end{verbatim}
+      \vspace*{-4ex}
+      should print out ``{\tt 3}''
+\item Find the documentation for the {\tt calc} command in the manual
+      (Appendix B).
+      Look at the \lab{Usage} and \lab{Examples} subsections.
+\item Get command-line help by running ``{\tt stilts calc help}'' and
+      ``{\tt stilts calc help=expression}''.
+\end{enumerate}
+
+\subsection{Acquire data from TAP service}
+
+\begin{enumerate}
+\item We will use the {\tt tapquery} command;
+      find the entry in the manual.
+\item Go back to the TOPCAT TAP window to find the TAP URL at the
+      bottom of the \lab{Select Service} tab (value of {\tt tapurl} parameter)
+\item Use the ADQL from step \ref{step:hrd-data} of section \ref{sec:hrd-tap}
+      (value of {\tt adql} parameter).
+\item Run the query and save the result to a local FITS file {\tt hrd.fits}:
+      \begin{verbatim}
+          stilts tapquery \
+            sync=false \
+            tapurl=http://gea.esac.esa.int/tap-server/tap \
+            adql="SELECT ra, dec, parallax, phot_g_mean_mag, \
+                         phot_g_mean_mag, bp_rp \
+                         astrometric_excess_noise, \
+                         phot_bp_rp_excess_factor \
+                  FROM gaiadr2.gaia_source \
+                  WHERE parallax > 10 \
+                    AND parallax_over_error > 10 \
+                    AND phot_bp_mean_flux_over_error > 10 \
+                    AND phot_rp_mean_flux_over_error > 10" \
+            out=hrd.fits
+      \end{verbatim}
+\end{enumerate}
+
+\subsection{Manipulate the downloaded table using {\tt tpipe}}
+
+We will perform some processing on the downloaded table using
+the {\tt tpipe} command.
+This reads an input table, optionally performs operations on it,
+and writes it to output, either to a file (in the same or different format)
+or some other destination.  It works like a Unix pipeline.
+
+The operations are defined by adding {\em filters} such as
+``{\tt select}'' (retain only some rows) or ``{\tt addcol}''
+(add a new column).  Filters are specified by adding using zero
+or more ``{\tt cmd=}'' parameters on the command line,
+and documented in Section 6.1: ``Processing Filters'' of the STILTS manual.
+
+The default output mode is write to a file,
+but other options such as ``{\tt meta}'' (display column metadata),
+``{\tt count}'' (count rows) and ``{\tt stats}'' (calculate mean, st.dev etc)
+are also available.
+Select non-default output modes using the ``{\tt omode=}'' parameter
+on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
+
+\begin{enumerate}
+\item Count the rows in the query result table:
+      \begin{verbatim}
+      stilts tpipe in=hrd.fits omode=count
+      \end{verbatim}
+      \vspace*{-3ex}
+\item See what columns the query result table has:
+      \begin{verbatim}
+      stilts tpipe in=hrd.fits omode=meta
+      \end{verbatim}
+      \vspace*{-3ex}
+\item Prepare an expression for a new column giving absolute magnitude
+      (see item \ref{item:calc-absmag} from section \ref{sec:plot-hrd})
+      \label{item:hrd-addcol}
+\item Prepare expressions for rows corresponding to the
+      astrometry and photometry selections
+      from sections \ref{sec:hrd-astrom} and \ref{sec:hrd-photom};
+      go back to TOPCAT's \lab{Subsets} window, and see the expressions
+      used to restrict the sources in the final HRD.
+      \label{item:hrd-select}
+\item Put items \ref{item:hrd-addcol} and \ref{item:hrd-select} together
+      to produce a plot-ready table (note use of quotes):
+      \begin{verbatim}
+  stilts tpipe in=hrd.fits \
+               cmd='addcol g_abs "phot_g_mean_mag + 5*log10(parallax/100)"' \
+               cmd='select "astrometric_excess_noise < 1"' \
+               cmd='select "phot_bp_rp_excess_factor < polyLine(bp_rp, -0.56,1.307, 0.03,1.192, \
+                                                                       1.51,1.295, 4.31,1.808)"' \
+               out=hrd_clean.fits
+      \end{verbatim}
+      \vspace*{-3ex}
+\item Count the rows in the output file.
+\end{enumerate}
+
+\begin{minipage}[t]{11cm}
+  \raggedright
+  \vspace*{1ex}
+  \subsection{Plot the diagram}
+
+  \begin{enumerate}
+  \item Plot the HRD on the screen using
+        the 2d plotting command {\tt plot2plane}:
+  \vspace*{-1ex}
+  \begin{verbatim}
+     stilts plot2plane layer=mark in=hrd_clean.fits \
+                       x=bp_rp y=g_abs yflip=true
+  \end{verbatim}
+  \vspace*{-4ex}
+  \item By default, a ``live'' plot shows up on the screen:
+        use the mouse to zoom and drag it around like in TOPCAT.
+  \item Output it to a graphics file instead,
+        by adding the ``{\tt out}'' parameter,
+        e.g.\ ``{\tt out=hrd.png}'' or ``{\tt out=hrd.pdf}''.
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \begin{flushright}
+  \vspace*{-0.6cm}
+  \winfig{width=6cm}{hrd_plot2plane.png}
+  \end{flushright}
+\end{minipage}
+
+\begin{minipage}[t]{11cm}
+  \vspace*{2cm}
+  \subsection{Use TOPCAT to refine the plot command}
+  There are {\em lots\/} more options to the plot commands.
+
+  \begin{enumerate}
+  \item In the cleaned HRD plot from the end of section~\ref{sec:hrd},
+        select the \ma{stilts.png}{STILTS} control at the lower left.
+        This is the command that will reproduce the plot from the command line.
+        It probably won't work from the command line exactly as written,
+        because some tables and subsets only exist in TOPCAT
+        (expected problems are shown in colour).
+        But we have now generated the post-processed file using {\tt tpipe}.
+  \item Hit the \lab{Window} button near the bottom to break out
+        the command display into a separate window.
+  \item Now adjust plot options in the TOPCAT GUI and see how the command
+        changes.
+  \item Get the plot looking like you want in TOPCAT, then copy and paste
+        the details into your STILTS {\tt plot2plane} command line.
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{hrd_stilts.png}
+\end{minipage}
+
+% Use the expression from section \ref{sec:hrd-stilts-plot},
+% but replace the ``{\tt in}'' and ``{\tt icmd}'' values with
+% ``{\tt in=hrd_clean.fits}'':
+
+\newpage
+
+
+\section*{Bonus}
+
+Go back and reproduce all the other exercises using STILTS!
+
+
+
+\begin{thebibliography}{9}
+\bibitem{dr2}
+   Gaia Collaboration et al.,
+   ``Gaia DR2: Summary of the contents and survey properties'',
+   Astronomy and Astrophysics {\em 616}, A1 (2018),
+   {\tt 2018A\&A...616A...1G}
+\bibitem{luri}
+   X.Luri et al.,
+   ``Gaia DR2: Using Gaia parallaxes'',
+   Astronomy and Astrophysics {\em 616}, A9 (2018),
+   {\tt 2018A\&A...616A...9L}
+\bibitem{lindegren}
+   L.Lindegren et al.,
+   ``Gaia DR2: The astrometric solution'',
+   Astronomy and Astrophysics {\em 616}, A2 (2018),
+   {\tt 2018A\&A...616A...2L}
+\bibitem{gouliermis}
+   D.A.Gouliermis, A.E.Dolphin, W.Brandner and Th.Henning,
+   ``The Star-forming Region NGC 346 in the Small Magellanic
+     Cloud with Hubble Space Telescope ACS Observations. I. Photometry'',
+   ApJS, 166 p.549
+   {\tt 2006ApJS..166..549G}
+\bibitem{2018ApJ...861L..11J}
+   W.-C.Jao, T.J.Henry, D.R.Gies, N.C.Hambly,
+   ``A Gap in the Lower Main Sequence Revealed by Gaia Data Release 2'',
+   ApJ Letts, 861, L11 (2018),
+   {\tt 2018ApJ...861L..11J}
+\end{thebibliography}
+
+\section*{Acknowledgements}
+
+This work has made use of data from the European Space Agency (ESA) mission
+{\it Gaia} (\url{https://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
+Data Processing and Analysis Consortium
+(DPAC, \url{https://www.cosmos.esa.int/web/gaia/dpac/consortium}).
+Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement.
+
+
+\label{lastPage}
+
+
+\end{document}
+
