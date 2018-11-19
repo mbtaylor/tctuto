@@ -49,7 +49,9 @@
 
 \begin{description}
   \item[TOPCAT:] \turl{http://www.starlink.ac.uk/topcat/}
+                 {\em (version 4.6-2 recommended)}
   \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
+                 {\em (version 3.1-5 recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
 \end{description}
 \tableofcontents
@@ -84,7 +86,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         (i.e.\ use the \lab{Cone Search} submenu of the \lab{VO} menu
          in the main topcat window)
   \item Fill in \entry{Keywords}{gaia dr2}, and hit \lab{Find Services}
-  \item There are a few options, that should mostly give simlar results.
+  \item There are a few options, that should mostly give similar results.
         {\tt ARI-Gaia} (probably the top one) is a good choice.
         Select it by clicking on it, and the
         partial URL of the service appears in the \lab{Cone URL} field
@@ -175,6 +177,8 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         and read off parallax mean and S.D.
   \item Invert to get distance to cluster
         (1000/parallax in mas = distance in parsec).
+  \item To do this without plotting, you can read off the mean and S.D.\ for
+        parallax in the \mb{stats_button.png}{Views}{Column Statistics} window.
   \end{enumerate}
 
   {\bf Note: careful when inverting parallaxes!}\\
@@ -286,7 +290,8 @@ TOPCAT's {\em expression language\/} can help.
   \item Open the \mb{fx_button}{Help}{Available Functions} browser to see
         what functions TOPCAT provides (they are listed in the manual too).
   \item Look under the \lab{Gaia} option to see astrometry-specific items
-  \item We will use {\tt astromUVW} and maybe {\tt astromXYZ} functions.
+  \item We will use the {\tt astromUVW} and maybe {\tt icrsToGal}
+        and {\tt astromXYZ} functions.
         The \lab{Examples} items in the function documentation are useful;
         for use with the {\tt gaia\_source} catalogue,
         you can often just cut and paste.
@@ -373,6 +378,8 @@ TOPCAT's {\em expression language\/} can help.
     \item Can you find any other clusters in velocity space?
     \item Try refining the selection by localising in position space too.
     \item What is the mean distance to the Hyades?
+    \item Try using Aladin and SAMP along with TOPCAT
+          to investigate the outliers.
   \end{itemize}
 \end{minipage}
 \begin{minipage}[t]{8cm}
@@ -412,6 +419,7 @@ J2015.5.
   \item Hit the \lab{OK} button at the bottom.
         A new table with 99\,079 rows should be loaded
   \end{enumerate}
+  Alternatively, you could download the table from the VizieR web page.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \vspace*{-1cm}
@@ -569,11 +577,17 @@ These propagated columns are in the matched table as
   \begin{itemize}
   \item Use the \mb{histo_button.png}{Graphics}{Histogram Plot}
         (as in section \ref{sec:histo-mean})
-        to find the mean values of {\tt deltaRa}, {\tt deltaDec} for
+        to find the mean values of $\delta$\,RA, $\delta$\,Dec for
         the true matches.
         If these are non-zero, why?
-% \item Start up Aladin with all-sky mode and use SAMP to see image data
-%       for some of the matched objects.
+  \item The match done here is between Gaia positions at J2015.5 and
+        HST positions taken at approximately J2004.6.
+        When using the X-Match service in section \ref{sec:cdsxmatch},
+        Gaia proper motions were automatically applied
+        to predict the Gaia positions at J2000.0.
+        Use the {\tt epochProp} function in the expression language
+        to do the match with the positions as Gaia proper motions
+        predict for J2004.6.  Does it make much difference?
   \end{itemize}
 % \begin{center}
 % \includegraphics[width=0.8\textwidth]{n3_samp.png}
@@ -596,7 +610,8 @@ all the nearby Gaia sources with good astrometry and photometry,
 and calculate their absolute magnitudes to construct an HR diagram,
 performing a couple of cleaning operations to improve the data.
 This procedure loosely follows
-Appendix~C of Lindegren et al.\ 2018 \cite{lindegren}.
+Appendix~C of the Gaia DR2 astrometry paper
+Lindegren et al.\ 2018 \cite{lindegren}.
 
 \subsection{Acquire data from TAP service}
 \label{sec:hrd-tap}
@@ -612,7 +627,8 @@ Appendix~C of Lindegren et al.\ 2018 \cite{lindegren}.
         (just above the ADQL text entry panel).
         This query may take a minute or two,
         so a synchronous query might time out
-        (with result, probably, ``{\em TAP response is not a VOTable}'').
+        (with the unhelpful result, probably,
+         ``{\em TAP response is not a VOTable}'').
   \item Execute the following query:
 \label{step:hrd-data}
     \begin{verbatim}
@@ -765,7 +781,7 @@ for later batch use like this is a common pattern of work.
       \begin{quote}
         \turl{http://www.starlink.ac.uk/stilts/sun256/}
       \end{quote}
-      or just google for ``stilts'' and go to the \lab{Documentaion} section.
+      or just google for ``stilts'' and go to the \lab{Documentation} section.
 \item Make sure you have it installed.  If you have topcat, you can
       run ``{\tt java -jar topcat-full.jar -stilts ...}''.
       More convenient (on Un*x), download the {\tt stilts} script
@@ -794,7 +810,7 @@ for later batch use like this is a common pattern of work.
       bottom of the \lab{Select Service} tab (value of {\tt tapurl} parameter)
 \item Use the ADQL from step \ref{step:hrd-data} of section \ref{sec:hrd-tap}
       (value of {\tt adql} parameter).
-\item Run the query and save the result to a local FITS file {\tt hrd.fits}:
+\item Run the query and output the result to a local FITS file {\tt hrd.fits}:
       \begin{verbatim}
           stilts tapquery \
             sync=false \
@@ -910,10 +926,13 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
         But we have now generated the post-processed file using {\tt tpipe}.
   \item Hit the \lab{Window} button near the bottom to break out
         the command display into a separate window.
+        You can see {\em all\/} the options (including defaults) with the
+        \lab{Formatting}$\mid$\lab{Include Defaults} menu item.
   \item Now adjust plot options in the TOPCAT GUI and see how the command
         changes.
   \item Get the plot looking like you want in TOPCAT, then copy and paste
         the details into your STILTS {\tt plot2plane} command line.
+  \item Experiment with changing the appearance by modifying the script.
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{8cm}
