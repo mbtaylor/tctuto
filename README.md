@@ -11,6 +11,10 @@ a PDF document.  The document is intended to be printed out
 and see how to use TOPCAT to do scientifically useful things
 with astronomy data.
 
+See comments in the `makefile` for how to use this to build the PDF file
+or the corresponding local data.
+
 This tutorial was originally developed (in various versions)
 for the series of VO-Schools run by the EU-funded ASTERICS project.
 
+Anybody is allowed to use or adapt this content in any way they like.
