@@ -13,6 +13,9 @@ with astronomy data.
 
 See comments in the `makefile` for how to use this to build the PDF file
 or the corresponding local data.
+If you don't want to build the document from source,
+you can find a pre-built PDF for at least one snapshot on the github
+[releases](https://github.com/mbtaylor/tctuto/releases/) page.
 
 This tutorial was originally developed (in various versions)
 for the series of VO-Schools run by the EU-funded ASTERICS project.
