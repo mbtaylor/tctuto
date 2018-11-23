@@ -149,7 +149,7 @@ hrd_clean.fits: hrd.fits
                                             1.51,1.295, 4.31,1.808)"' \
                out=$@
 
-hrd_only.png: hrd_clean.fits
+figures/hrd_only.png: hrd_clean.fits
 	stilts plot2plane \
                insets=-4,-4,-4,-4 minor=false xpix=600 ypix=500 yflip=true \
                densemap=heat denseclip=0.07,1 \

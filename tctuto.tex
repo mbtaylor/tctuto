@@ -24,11 +24,13 @@
 \definecolor{brown}{rgb}{0.5,0.25,0.0}
 \definecolor{grey}{rgb}{0.6,0.6,0.6}
 
-\newcommand{\buttimg}[1]
-           {\mbox{\vtop{\vskip-2ex\hbox{\includegraphics[height=3ex]{#1}}}}}
-\newcommand{\winfig}[2]
+\newcommand{\buttimg}[1] % filename
+           {\mbox{\vtop{\vskip-2ex\hbox{\includegraphics[height=3ex]
+                                                        {icons/#1}}}}}
+\newcommand{\winfig}[2]  % includegraphics-options, filename
            {\vspace*{-0.5cm}
-            \hspace*{0.5cm}\mbox{\vtop{\hbox{\includegraphics[#1]{#2}}}}}
+            \hspace*{0.5cm}\mbox{\vtop{\hbox{\includegraphics[#1]
+                                                             {figures/#2}}}}}
 \newcommand{\lab}[1]{{\bf #1}}
 \newcommand{\ma}[2]{\buttimg{#1}~\lab{#2}}
 \newcommand{\mb}[3]{\buttimg{#1}~\lab{#2}$\mid$\lab{#3}}
@@ -589,9 +591,6 @@ These propagated columns are in the matched table as
         to do the match with the positions as Gaia proper motions
         predict for J2004.6.  Does it make much difference?
   \end{itemize}
-% \begin{center}
-% \includegraphics[width=0.8\textwidth]{n3_samp.png}
-% \end{center}
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{n3_skyboth.png}
