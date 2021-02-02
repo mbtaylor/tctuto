@@ -55,24 +55,22 @@
   \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
                  {\em (version 3.2 or later recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
+  \item[Version:] {\tt \input{version}}
 \end{description}
+
 \tableofcontents
 
-\vspace*{2cm}
-\begin{center}
-  \color{grey}
-  {\tt \input{version}}
-\end{center}
-
-\newpage
-
+\vspace{3ex}
 This tutorial uses data from Gaia Early Data Release 3 (EDR3) \cite{edr3}
 to lead you through some of the capabilities of TOPCAT and STILTS.
 For best results, you should have the manuals to hand:
 \url{http://www.starlink.ac.uk/topcat/sun253/} and
 \url{http://www.starlink.ac.uk/stilts/sun256/}.
 
+\newpage
+
 \section{Cluster identification \#1: Messier 4 in proper motion space}
+\label{sec:m4}
 
 \begin{minipage}[t]{11cm}
 In this example we will determine the mean parallax of
@@ -83,30 +81,34 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 
   \raggedright
   \begin{enumerate}
+  \item Start TOPCAT.
   \item Open the \mb{CONE_DIALOG.png}{VO}{Cone Search} window \\
         (i.e.\ use the \lab{Cone Search} submenu of the \lab{VO} menu
-         in the main topcat window)
-  \item Fill in \entry{Keywords}{gaia edr3}, and hit \lab{Find Services}
+         in the main topcat window).
+  \item Fill in \entry{Keywords}{gaia edr3}, and hit \lab{Find Services}.
   \item There are a few options, that should mostly give similar results.
-        {\tt eDR3 lite Cone} is a good choice.
-        Select it by clicking on it, and the
-        partial URL of the service appears in the \lab{Cone URL} field
-  \item \entry{Object Name}{M4}, hit \lab{Resolve} to fill in
-        sky position fields
+        The one with Short Name ``{\tt eDR3 lite Cone}'' is a good choice.
+        Select it by clicking on its row, and the
+        partial URL of the service appears in the \lab{Cone URL} field.
+  \item Fill in \entry{Object Name}{M4}, then hit \lab{Resolve} to fill in
+        sky position fields.
   \item \entry{Radius}{0.3} (degrees)
   \item Hit \lab{OK};
         new table is loaded into topcat main control window
-        with about 50\,000 rows
-        (if download is too slow, cancel and try with \entry{Radius}{0.1},
-        which is about 20\,000 rows,
-        and maybe \entry{Verbosity}{1})
+        with about 50\,000 rows.
+        If the download is too slow, cancel and try with \entry{Radius}{0.1},
+        which retrieves about 20\,000 rows,
+        and maybe \entry{Verbosity}{1},
+        which reduces the number of columns requested.
   \item Use the \mb{skyplot_button.png}{Graphics}{Sky Plot} window
-        to see the positions on the sky
+        to see the positions on the sky.
   \item Play with the plot.  Note overdense regions are coloured darker.
+        Use the options in the \lab{Form} tab to change marker size,
+        colour and shading.
         Practice navigation: use mouse drag and wheel (or CTRL-drag).
-        Click little \buttimg{navig_help.png} button at bottom left
-        for navigation help; details are different for different
-        plot types.
+        Click the little \buttimg{navig_help.png} button at bottom left
+        for navigation help;
+        note navigation details are different for different plot types.
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{8cm}
@@ -116,6 +118,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 \vspace{1cm}
 \subsection{Identify comoving cluster}
 \label{sec:blob}
+\label{sec:m4-pm}
 
 \begin{minipage}[t]{11cm}
   \raggedright
@@ -136,7 +139,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \begin{picture}(8,0)
-  \put(0,-8){\winfig{width=8cm}{m4_pmplot.png}}
+  \put(0,-6){\winfig{width=8cm}{m4_pmplot.png}}
   \end{picture}
 \end{minipage}
 
@@ -166,8 +169,8 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   \item Plot the proper motions.
         In the \lab{Form} tab, use the \ma{Plus1.png}{Forms} menu
         and select the \ma{ADD_FORM_VECTOR.png}{Add SkyVector} item,
-        with \entry{Delta Longitude}{pmra},
-             \entry{Delta Latitude}{pmdec}.
+        with \entry{Delta Lon(*)}{pmra},
+             \entry{Delta Lat}{pmdec}.
         The arrows will initially be much too long (units of degrees);
         you will have to set \entry{Unit}{scaled} (auto-scaling),
         and optionally adjust to taste with the \lab{Scale} slider.
@@ -189,16 +192,18 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   \item Normalise histograms to the same height:
         click on the \ma{histobars.png}{Bins} control in the left-hand panel,
         select the \lab{General} tab, and set
-        \lab{Normalise} to \lab{Maximum}.
+        \lab{Normalise} to \lab{maximum}.
         Return to \ma{histoplot.png}{histogram layer} control
   \item Zoom in horizontally (mouse below X axis, use drag and wheel/CTRL-drag)
-        to read off the peak/average parallax
+        to read off the comoving peak/average parallax.
+        Note the comoving (cluster) distribution is different from the
+        background sample.
   \item For a more accurate result, fit Gaussian to data:
         \ma{Plus1.png}{Forms} menu in \lab{Form} tab,
         \ma{ADD_FORM_GAUSSIAN}{Gaussian} option.
         Then scroll to bottom of Gaussian layer description in \lab{Form} tab,
         select \entry{Subset}{comoving},
-        and read off parallax mean and S.D.
+        and read off parallax \lab{Mean} and \lab{S.D.}
   \item Invert mean parallax get distance to cluster
         (1000/parallax in mas = distance in parsec).
   \item To do this without plotting, you can read off the mean and S.D.\ for
@@ -227,7 +232,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 
 \newpage
 
-\section{Cluster identification \#2: Hyades in velocity space}
+\section{Cluster identification \#2: Hyades in 3-D velocity space}
 
 This example locates the Hyades open cluster in 3-dimensional velocity space,
 using Gaia's proper motion and radial velocity observations.
@@ -264,7 +269,7 @@ So we need to make a more sophisticated query using TAP.
         to see information about available columns.
   \item Look in the \lab{Service} tab to see information about the service
   \item Look in the \lab{Hints} tab for a very basic ADQL cheat sheet
-  \item Type in some very simple ADQL:\\
+  \item Type in to the bottom panel some very simple ADQL:\\
         ``{\tt SELECT TOP 10 ra, dec FROM gaiaedr3.gaia\_source}''
   \item Note that syntax errors (including partial or misspelt tables/columns)
         are highlighted in red.
@@ -286,27 +291,28 @@ So we need to make a more sophisticated query using TAP.
   \end{verbatim}
   \vspace*{-2ex}
   The result should contain about 25\,000 rows.
-  \paragap
-
-  The query is for all the nearby sources
-  (nominally within 1000/15 $\approx$ 66\,parsec)
-  with radial velocities (only about 7 million DR2/EDR3 sources have RV)
-  and good determinations of parallax.
-  The fact that parallax error is $\leq$20\% means that it's OK
-  to invert parallax to get distance.
-  We are retrieving all the basic astrometric parameters and some
-  photometry.
-  \paragap
-
-  The Hyades should be in there somewhere.  Can we find them?
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{hy_tapsel.png}
 
-  \vspace*{2cm}
+  \vspace*{1cm}
 
   \winfig{width=8cm}{hy_tapex.png}
 \end{minipage}
+\paragap
+
+The query is for all the nearby sources
+(nominally within 1000/15 $\approx$ 66\,parsec)
+with observed radial velocities
+(only about 7 million DR2/EDR3 sources have RV)
+and good determinations of parallax.
+The fact that parallax error is $\leq$20\% means that it's OK
+to invert parallax to calculate distance and absolute magnitude.
+We are retrieving all the basic astrometric parameters and some
+photometry.
+\paragap
+
+The Hyades should be in there somewhere.  Can we find them?
 
 
 \newpage
@@ -324,7 +330,7 @@ TOPCAT's {\em expression language\/} can help.
   \begin{enumerate}
   \item Open the \mb{fx_button}{Help}{Available Functions} browser to see
         what functions TOPCAT provides (they are listed in the manual too).
-  \item Look under the \lab{Gaia} option to see astrometry-specific items
+  \item Look under the \lab{Gaia} entry to see astrometry-specific items
   \item We will use the {\tt astromUVW} and maybe {\tt icrsToGal}
         and {\tt astromXYZ} functions.
         The \lab{Examples} items in the function documentation are useful;
@@ -334,25 +340,26 @@ TOPCAT's {\em expression language\/} can help.
         ``{\tt dr2\_radial\_velocity}''.
   \item Open the \mb{cols_button.png}{Views}{Column Info} window
         and choose the \mb{plus_button.png}{Columns}{New Synthetic Column}
-        menu item
+        action
   \item Create a new column giving Cartesian velocity components:
         \entry{Name}{uvw}, \entry{Units}{km/s} and for \lab{Expression}:
         \begin{verbatim}
   astromUVW(array(ra, dec, parallax, pmra, pmdec, dr2_radial_velocity))
         \end{verbatim}
         \vspace*{-0.5cm}
-        That gives velocities along ICRS axes.
+        That calculates velocities along ICRS axes.
         If you want it in Galactic coordinates, wrap the whole expression
         in the {\tt icrsToGal(...)} function.
-  \item Look at the new column in the \mb{browser1.png}{Views}{Data Window}
-        (scroll all the way to the right).
-        It is a 3-element array; you can get the array elements
+  \item Look at the new column in the \mb{browser1.png}{Views}{Table Data}
+        window (scroll all the way to the right).
+        It is a 3-element array; you can access the array elements
         using expressions {\tt uvw[0]}, {\tt uvw[1]}, {\tt uvw[2]}
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{hy_coldef.png}
 \end{minipage}
+\paragap
 
 \subsection{Identify Hyades graphically in 3-d velocity space}
 
@@ -381,12 +388,14 @@ TOPCAT's {\em expression language\/} can help.
   \item Navigate so only the objects in the overdense region
         (about 200 of them?) are visible inside the wireframe ---
         these are the Hyades.
-  \item Use \mb{spoints5.png}{Subsets}{New Subset From Visible},
+  \item Use \mb{spoints5.png}{Subsets}{Subset From Visible},
         \entry{Name}{hyades}, \lab{Add Subset}.
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{8cm}
-  \winfig{width=8cm}{hy_phase.png}
+  \begin{picture}(8,0)
+    \put(0,-9){\winfig{width=8cm}{hy_phase.png}}
+  \end{picture}
 \end{minipage}
 
 
@@ -399,6 +408,8 @@ TOPCAT's {\em expression language\/} can help.
         (\mb{skyplot_button.png}{Graphics}{Sky Plot})
   \item Use the \lab{Subsets} tab to make sure both \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
+        You might want to set \entry{Shading Mode}{flat} and
+        fiddle with marker size and shape for clarity.
   \item To get an all-sky view,
         use the \buttimg{axes_button.png} \lab{Axes} control,
         \lab{Projection} tab, and change the \lab{Projection} selector
@@ -517,7 +528,6 @@ at J2016.0.
         loaded, with about 24\,000 rows.
   \item Look at the columns of the new table (all HST followed by all Gaia)
         in the \mb{cols_button.png}{Views}{Column Info} window
-  \item View the new table in a \mb{skyplot_button.png}{Graphics}{Sky Plot}
   \end{enumerate}
 Note: the match is done with Gaia coordinates rolled back
 (using Gaia proper motions) to J2000.0.
@@ -549,18 +559,23 @@ These propagated columns are in the matched table as
         \entry{Lon(1)}{\_RAJ2000}, \entry{Lat(1)}{\_DEJ2000} (HST) \\
         \entry{Lon(2)}{ra}, \entry{Lat(2)}{dec} (Gaia)
   \item Zoom in to look at the associations.  There are too many!
-  \item You can fiddle around with the \label{Form} tab to make the
+        What is this plot telling you?
+  \item You can fiddle around with the \lab{Form} tab to make the
         plot clearer, e.g. add a \ma{mark2_button.png}{Mark2} layer;
         change marker size, shape or colour.
   \end{enumerate}
   Visualising the results of a crossmatch is very often a good
   idea, unless you're pretty sure what you're going to get.
-  Here, you can see it was crucial to understand the results.
+  Here, you can see it was crucial to understand the results:
+  most of these matches are spurious, because there is a high density
+  of HST sources.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \vspace*{-0.5cm}
   \winfig{width=8cm}{n3_allmatch.png}
 \end{minipage}
+
+\vspace*{-0.6cm}
 
 \subsection{Investigate and identify matches}
 
@@ -582,6 +597,7 @@ These propagated columns are in the matched table as
         define new subset \lab{true\_match}.
   \item Go back to the sky associations plot from the previous section,
         and use the \lab{Subsets} tab to visualise which are the true matches.
+        Why do you think this offset is not zero?
   \item Make a colour-colour diagram combining HST and Gaia photometry: \\
         Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window,
         plot \entry{X}{Vmag-Imag}, \entry{Y}{bp\_rp},
@@ -592,6 +608,15 @@ These propagated columns are in the matched table as
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{n3_truematch.png}
 \end{minipage}
+
+\paragap
+Note: in the above we have used the Gaia columns {\tt ra} and {\tt dec},
+giving the positions observed at J2016.0.
+It would be a bit better to use {\tt ra\_epoch2000} and {\tt dec\_epoch2000},
+the positions rolled back to J2000.0 using Gaia proper motions,
+since the HST observations were at about J2014.6, and even better to
+apply proper motions to get the positions at J2014.6.
+But the differences (motion over 10--15 years) are fairly small.
 
 
 \begin{minipage}[t]{11cm}
@@ -605,7 +630,8 @@ These propagated columns are in the matched table as
   with positions covering the same sky region.
   \begin{enumerate}
   \item First, retrieve Gaia data in the region of interest.
-        Use the \mb{CONE_DIALOG.png}{VO}{Cone Search} window as in
+        Use the \mb{CONE_DIALOG.png}{VO}{Cone Search} window
+        to a Gaia service as in
         section \ref{sec:m4-cone}, but this time fill in
         \entry{Object Name}{ngc346}, \entry{Radius}{0.05} (degrees).
   \item Plot the Gouliermis (from VizieR) and Gaia (from Cone Search)
@@ -616,7 +642,7 @@ These propagated columns are in the matched table as
         action to overplot the same thing for the other dataset.
   \item Open the \mb{pairmatch_button.png}{Joins}{Pair Match} window
         from the main control window.
-        Default \lab{Match Criteria} are OK in this case.
+        Default \lab{Match Criteria} (Sky, 1 arcsec) are OK in this case.
         Fill in the \lab{Table 1} and \lab{Table 2} details for the
         Gouliermis and Gaia tables.
         Entry \entry{Match Selection}{All matches}.
@@ -640,8 +666,7 @@ These propagated columns are in the matched table as
   \item Use the \mb{histo_button.png}{Graphics}{Histogram Plot}
         (as in section \ref{sec:histo-mean})
         to find the mean values of $\delta$\,RA, $\delta$\,Dec for
-        the true matches.
-        If these are non-zero, why?
+        the true matches.  What do these values tell you?
   \item The match done here is between Gaia positions at J2016.0 and
         HST positions taken at approximately J2004.6.
         When using the X-Match service in section \ref{sec:cdsxmatch},
@@ -836,10 +861,7 @@ for later batch use like this is a common pattern of work.
 \begin{enumerate}
 \item Unlike TOPCAT, you can't bluff your way through STILTS
       by pointing'n'clicking; you'll need some documentation.
-      Find the manual here:
-      \begin{quote}
-        \turl{http://www.starlink.ac.uk/stilts/sun256/}
-      \end{quote}
+      Find the manual at \turl{http://www.starlink.ac.uk/stilts/sun256/},
       or just google for ``stilts'' and go to the \lab{Documentation} section.
 \item Make sure you have it installed.  If you have topcat, you can
       run ``{\tt java -jar topcat-full.jar -stilts ...}''.
