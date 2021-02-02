@@ -16,6 +16,7 @@ PDFLATEX = pdflatex
 DATA = m4.fits hy.fits ngc346.fits ngc346-gaia.fits ngc346xEDR3.fits \
        hrd-100pc.fits hrd-66pc.fits \
        hrd.fits hrd_clean.fits \
+       m4mini.fits
 
 # Name of repository.  Only used to annotate the generated document,
 # alongside the git commit date and SHA1.
@@ -78,6 +79,13 @@ stilts.jar:
 m4.fits:
 	$(STILTS) tpipe in='http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?RA=245.89675&DEC=-26.52575&SR=0.3&VERB=2' \
                out=$@
+
+m4mini.fits: m4.fits
+	$(STILTS) tpipe in=m4.fits \
+                        cmd='keepcols "ra dec pmra pmdec parallax"' \
+                        cmd='clearparams *' \
+                        out=$@
+
 
 hy.fits:
 	$(STILTS) tapquery \

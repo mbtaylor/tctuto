@@ -684,6 +684,227 @@ But the differences (motion over 10--15 years) are fairly small.
   \winfig{width=8cm}{n3_pairmatch.png}
 \end{minipage}
 
+\newpage
+\section{Messier 4 in proper motion space using STILTS}
+
+In this section we will re-do the determination of the distance to M4
+from section \ref{sec:m4},
+but this time from the command line,
+though we will use some of the results of the earlier GUI activity.
+Using TOPCAT interactively to work out how to write STILTS scripts
+for later batch use like this is a common pattern of work.
+
+\subsection{Get STILTS running}
+
+\begin{enumerate}
+\item Unlike TOPCAT, you can't bluff your way through STILTS
+      by pointing'n'clicking; you'll need some documentation.
+      Find the manual here at \turl{http://www.starlink.ac.uk/stilts/sun256/}
+      or maybe just google for ``stilts''
+      and go to the \lab{Documentation} section.
+\item Make sure you have it installed.
+      ``{\tt java -jar stilts.jar ...}'' should work.
+      If you have topcat, you can run
+      ``{\tt java -jar topcat-full.jar -stilts ...}'' instead.
+      More convenient (on Un*x), download the {\tt stilts} script
+      into the same directory as {\tt topcat-full.jar} (or {\tt stilts.jar}).
+      Then the directory needs to be on your path, or you can use the
+      full pathname or set up an alias.
+      We will write just ``{\tt stilts}'' from now on.
+\item Run a command:
+      \vspace*{-2ex}
+      \begin{verbatim}
+      stilts calc expression="1+2"
+      \end{verbatim}
+      \vspace*{-4ex}
+      should print out ``{\tt 3}''
+\item Find the documentation for the {\tt calc} command in the manual
+      (Appendix~B).
+      Look at the \lab{Usage} and \lab{Examples} subsections.
+\item Get command-line help by running ``{\tt stilts calc help}'' and
+      ``{\tt stilts calc help=expression}''.
+\end{enumerate}
+
+\subsection{Acquire data from Cone Search service}
+\newcommand{\preverb}{\vspace{-1ex}}
+\newcommand{\postverb}{\vspace{-4ex}}
+
+\begin{enumerate}
+\item Investigate the STILTS {\tt cone} command;
+      see the documentation in Appendix B of the manual
+      (\url{http://www.starlink.ac.uk/stilts/sun256/cone.html})
+      and run
+      \preverb
+      \begin{verbatim}
+      stilts cone help
+      \end{verbatim}
+      \postverb
+      There is a documentation bug! (STILTS v3.4); the {\tt out} parameter
+      is also required to give an output file
+\item Find out the cone search parameters we used in \ref{sec:m4-cone}.
+      This includes the service URL (from the \lab{Cone URL} field)
+      and the central RA (longitude) and Dec (latitude) parameters of M4,
+      as well as the search radius.
+\item Putting those together, we need to run
+      \preverb
+      \begin{verbatim}
+      stilts cone serviceurl='http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?' 
+                  lon=245.89675 lat=-26.52575 radius=0.3 out=m4.fits
+      \end{verbatim}
+      \postverb
+      (Note some values may need to be quoted to defend them from the shell
+      if they contain certain characters.)
+      The output is a VOTable {\tt m4.fits} (output format has been
+      determined by file extension here).
+\end{enumerate}
+
+{\bf Note:} some values containing whitespace or other strange
+characters need to be quoted to prevent the shell expanding them.
+This quoting can get a bit messy.
+I {\em believe\/} the commands as written in this section will work
+in common Un*x shells, also Windows command prompt and PowerShell.
+
+\subsection{Manipulate the downloaded table using {\tt tpipe}}
+
+We will perform some processing on the downloaded table using
+the {\tt tpipe} command.
+This reads an input table, optionally performs operations on it,
+and writes it to output, either to a file (in the same or different format)
+or some other destination.  It works like a Unix pipeline.
+\paragap
+
+The operations are defined by adding {\em filters} such as
+``{\tt select}'' (retain only some rows) or ``{\tt addcol}''
+(add a new column).  Filters are specified by adding using zero
+or more ``{\tt cmd=}'' parameters on the command line,
+and documented in Section 6.1: ``Processing Filters'' of the STILTS manual.
+\paragap
+
+The default output mode is write to a file,
+but other options such as ``{\tt meta}'' (display column metadata),
+``{\tt count}'' (count rows) and ``{\tt stats}'' (calculate mean, st.dev etc)
+are also available.
+Select non-default output modes using the ``{\tt omode=}'' parameter
+on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
+
+\begin{enumerate}
+\item Count the rows in the query result table:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4.fits omode=count
+      \end{verbatim}
+      \postverb
+\item See what columns the query result table has:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4.fits omode=meta
+      \end{verbatim}
+      \postverb
+      or for a more manageable output
+      (customised metadata; the ``{\tt meta}'' filter turns the table
+      into a table with one row per input table column):
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4.fits cmd='meta name units class'
+      \end{verbatim}
+      \postverb
+\item For convenience, write a new table with only a few of the columns.
+      The {\tt keepcols} filter produces a table with only the listed
+      columns (the list is space-separated and needs to be quoted).
+      The {\tt clearparams} filter removes per-table metadata.
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4.fits cmd='keepcols "ra dec pmra pmdec parallax"' cmd='clearparams *'
+                   out=m4mini.fits
+      \end{verbatim}
+      \postverb
+\item Calculate statistics using the {\tt stats} output mode:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits omode=stats
+      \end{verbatim}
+      \postverb
+\item View a few rows of the table.
+      The using the {\tt head} filter keeps only the first few rows:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits cmd='head 10'
+      \end{verbatim}
+      \postverb
+      You can select rows using the {\tt select} filter, and combine
+      filters by stringing them together on the command line.
+      Try both:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits cmd='head 10' cmd='select parallax>0'
+      stilts tpipe in=m4mini.fits cmd='select parallax>0' cmd='head 10'
+      \end{verbatim}
+      \postverb
+      Why are they different?
+\item Add a column calculating estimated distance:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits cmd='addcol dist_est 1000/parallax' cmd='head 10'
+      \end{verbatim}
+      \postverb
+\item Write a new table containing only those rows in the comoving region
+      of proper motion space.  Looking at the proper motion plot from
+      section \ref{sec:m4-pm} you can estimate the expression by eye as
+      being approximately a circle radius 2 centered on (-12.6,-18.9).
+      The {\tt select} filter includes only rows for which the
+      given expression is true, and the {\tt hypot(a,b)} function is short for
+      {\tt sqrt(x*x,y*y)}.
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits cmd='select "hypot(pmra+12.6,pmdec+18.9)<2"' out=cluster.fits
+      \end{verbatim}
+      \postverb
+      In fact TOPCAT can produce these geometric expressions for you:
+      you can use the
+      \mb{algselect_button.png}{Subsets}{Draw Algebraic Subset} (Ellipse)
+      action in the plot window to generate them graphically.
+\item Calculate the mean and S.D.\ of cluster parallax
+      using the previous selection:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=cluster.fits cmd='keepcols "parallax"' omode=stats
+      \end{verbatim}
+      \postverb
+      or do it all in one go:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4.fits cmd='select "hypot(pmra+12.6,pmdec+18.9)<2"'
+                              cmd='keepcols "parallax"'
+                              cmd='stats name mean stdev'
+      \end{verbatim}
+      \postverb
+\end{enumerate}
+
+\subsection{Plot using STILTS}
+
+\begin{enumerate}
+\item Plot the cluster on the screen:
+      \preverb
+      \begin{verbatim}
+      stilts plot2sky in=cluster.fits layer1=mark lon=ra lat=dec
+      \end{verbatim}
+      \postverb
+      Note that this plot is interactive --- you can zoom and drag
+      it around as in a TOPCAT plot window.
+\item Create a plot graphics file.
+      Just add an output parameter like ``{\tt out=plot.png}'' or
+      ``{\tt out=plot.pdf}'' to the above {\tt plot2sky} command
+      to write static output files.
+\item Interoperate with TOPCAT:
+      STILTS plotting commands can get quite complicated.
+      If you have a plot in TOPCAT and want to reproduce it in STILTS,
+      look at the \ma{stilts.png}{STILTS} control,
+      which shows you the invocation needed to reproduce it.
+\end{enumerate}
+
+There is {\em lots} more that {\tt tpipe}, and STILTS in general, can do.
+Explore the manual!
+
 
 \newpage
 \section{Local Herzsprung-Russell Diagram}
