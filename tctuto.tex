@@ -1069,181 +1069,188 @@ But you didn't need to know that to improve the data like this.
 
 \newpage
 
-\section{Local Herzsprung-Russell Diagram using STILTS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% This section commented out since it's been more or less replaced by
+% the M4 with stilts section.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-In this section we will reproduce the cleaned HRD from the previous section,
-but this time from the command line, though we will use some of the results
-of the earlier GUI activity.
-Using TOPCAT interactively to work out how to write STILTS scripts
-for later batch use like this is a common pattern of work.
-
-\subsection{Get STILTS running}
-
-\begin{enumerate}
-\item Unlike TOPCAT, you can't bluff your way through STILTS
-      by pointing'n'clicking; you'll need some documentation.
-      Find the manual at \turl{http://www.starlink.ac.uk/stilts/sun256/},
-      or just google for ``stilts'' and go to the \lab{Documentation} section.
-\item Make sure you have it installed.  If you have topcat, you can
-      run ``{\tt java -jar topcat-full.jar -stilts ...}''.
-      More convenient (on Un*x), download the {\tt stilts} script
-      into the same directory as {\tt topcat-full.jar} (or {\tt stilts.jar}).
-      We will write just ``{\tt stilts}'' from now on.
-\item Run a command:
-      \vspace*{-2ex}
-      \begin{verbatim}
-      stilts calc expression="1+2"
-      \end{verbatim}
-      \vspace*{-4ex}
-      should print out ``{\tt 3}''
-\item Find the documentation for the {\tt calc} command in the manual
-      (Appendix B).
-      Look at the \lab{Usage} and \lab{Examples} subsections.
-\item Get command-line help by running ``{\tt stilts calc help}'' and
-      ``{\tt stilts calc help=expression}''.
-\end{enumerate}
-
-\subsection{Acquire data from TAP service}
-
-\begin{enumerate}
-\item We will use the {\tt tapquery} command;
-      find the entry in the manual.
-\item Go back to the TOPCAT TAP window to find the TAP URL at the
-      bottom of the \lab{Select Service} tab (value of {\tt tapurl} parameter)
-\item Use the ADQL from step \ref{step:hrd-data} of section \ref{sec:hrd-tap}
-      (value of {\tt adql} parameter).
-\item Run the query and output the result to a local FITS file {\tt hrd.fits}:
-      \begin{verbatim}
-          stilts tapquery \
-            sync=false \
-            tapurl=http://gea.esac.esa.int/tap-server/tap \
-            adql="SELECT ra, dec, parallax, phot_g_mean_mag, \
-                         phot_g_mean_mag, bp_rp \
-                         astrometric_excess_noise, \
-                         phot_bp_rp_excess_factor \
-                  FROM gaiadr2.gaia_source \
-                  WHERE parallax > 10 \
-                    AND parallax_over_error > 10 \
-                    AND phot_bp_mean_flux_over_error > 10 \
-                    AND phot_rp_mean_flux_over_error > 10" \
-            out=hrd.fits
-      \end{verbatim}
-\end{enumerate}
-
-\subsection{Manipulate the downloaded table using {\tt tpipe}}
-
-We will perform some processing on the downloaded table using
-the {\tt tpipe} command.
-This reads an input table, optionally performs operations on it,
-and writes it to output, either to a file (in the same or different format)
-or some other destination.  It works like a Unix pipeline.
-
-The operations are defined by adding {\em filters} such as
-``{\tt select}'' (retain only some rows) or ``{\tt addcol}''
-(add a new column).  Filters are specified by adding using zero
-or more ``{\tt cmd=}'' parameters on the command line,
-and documented in Section 6.1: ``Processing Filters'' of the STILTS manual.
-
-The default output mode is write to a file,
-but other options such as ``{\tt meta}'' (display column metadata),
-``{\tt count}'' (count rows) and ``{\tt stats}'' (calculate mean, st.dev etc)
-are also available.
-Select non-default output modes using the ``{\tt omode=}'' parameter
-on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
-
-\begin{enumerate}
-\item Count the rows in the query result table:
-      \begin{verbatim}
-      stilts tpipe in=hrd.fits omode=count
-      \end{verbatim}
-      \vspace*{-3ex}
-\item See what columns the query result table has:
-      \begin{verbatim}
-      stilts tpipe in=hrd.fits omode=meta
-      \end{verbatim}
-      \vspace*{-3ex}
-\item Prepare an expression for a new column giving absolute magnitude
-      (see item \ref{item:calc-absmag} from section \ref{sec:plot-hrd})
-      \label{item:hrd-addcol}
-\item Prepare expressions for rows corresponding to the
-      astrometry and photometry selections
-      from sections \ref{sec:hrd-astrom} and \ref{sec:hrd-photom};
-      go back to TOPCAT's \lab{Subsets} window, and see the expressions
-      used to restrict the sources in the final HRD.
-      \label{item:hrd-select}
-\item Put items \ref{item:hrd-addcol} and \ref{item:hrd-select} together
-      to produce a plot-ready table (note use of quotes):
-      \begin{verbatim}
-  stilts tpipe in=hrd.fits \
-               cmd='addcol g_abs "phot_g_mean_mag + 5*log10(parallax/100)"' \
-               cmd='select "astrometric_excess_noise < 1"' \
-               cmd='select "phot_bp_rp_excess_factor < polyLine(bp_rp, -0.56,1.307, 0.03,1.192, \
-                                                                       1.51,1.295, 4.31,1.808)"' \
-               out=hrd_clean.fits
-      \end{verbatim}
-      \vspace*{-3ex}
-\item Count the rows in the output file.
-\end{enumerate}
-
-\begin{minipage}[t]{11cm}
-  \raggedright
-  \vspace*{1ex}
-  \subsection{Plot the diagram}
-
-  \begin{enumerate}
-  \item Plot the HRD on the screen using
-        the 2d plotting command {\tt plot2plane}:
-  \vspace*{-1ex}
-  \begin{verbatim}
-     stilts plot2plane layer=mark in=hrd_clean.fits \
-                       x=bp_rp y=g_abs yflip=true
-  \end{verbatim}
-  \vspace*{-4ex}
-  \item By default, a ``live'' plot shows up on the screen:
-        use the mouse to zoom and drag it around like in TOPCAT.
-  \item Output it to a graphics file instead,
-        by adding the ``{\tt out}'' parameter,
-        e.g.\ ``{\tt out=hrd.png}'' or ``{\tt out=hrd.pdf}''.
-  \end{enumerate}
-\end{minipage}
-\begin{minipage}[t]{8cm}
-  \begin{flushright}
-  \vspace*{-0.6cm}
-  \winfig{width=6cm}{hrd_plot2plane.png}
-  \end{flushright}
-\end{minipage}
-
-\begin{minipage}[t]{11cm}
-  \vspace*{2cm}
-  \subsection{Use TOPCAT to refine the plot command}
-  There are {\em lots\/} more options to the plot commands.
-
-  \begin{enumerate}
-  \item In the cleaned HRD plot from the end of section~\ref{sec:hrd},
-        select the \ma{stilts.png}{STILTS} control at the lower left.
-        This is the command that will reproduce the plot from the command line.
-        It probably won't work from the command line exactly as written,
-        because some tables and subsets only exist in TOPCAT
-        (expected problems are shown in colour).
-        But we have now generated the post-processed file using {\tt tpipe}.
-  \item Hit the \lab{Window} button near the bottom to break out
-        the command display into a separate window.
-        You can see {\em all\/} the options (including defaults) with the
-        \lab{Formatting}$\mid$\lab{Include Defaults} menu item.
-  \item Now adjust plot options in the TOPCAT GUI and see how the command
-        changes.
-  \item Get the plot looking like you want in TOPCAT, then copy and paste
-        the details into your STILTS {\tt plot2plane} command line.
-  \item Experiment with changing the appearance by modifying the script.
-  \end{enumerate}
-\end{minipage}
-\begin{minipage}[t]{8cm}
-  \winfig{width=8cm}{hrd_stilts.png}
-\end{minipage}
-
-% Use the expression from section \ref{sec:hrd-stilts-plot},
-% but replace the ``{\tt in}'' and ``{\tt icmd}'' values with
-% ``{\tt in=hrd_clean.fits}'':
+% \section{Local Herzsprung-Russell Diagram using STILTS}
+% 
+% In this section we will reproduce the cleaned HRD from the previous section,
+% but this time from the command line, though we will use some of the results
+% of the earlier GUI activity.
+% Using TOPCAT interactively to work out how to write STILTS scripts
+% for later batch use like this is a common pattern of work.
+% 
+% \subsection{Get STILTS running}
+% 
+% \begin{enumerate}
+% \item Unlike TOPCAT, you can't bluff your way through STILTS
+%       by pointing'n'clicking; you'll need some documentation.
+%       Find the manual at \turl{http://www.starlink.ac.uk/stilts/sun256/},
+%       or just google for ``stilts'' and go to the \lab{Documentation} section.
+% \item Make sure you have it installed.  If you have topcat, you can
+%       run ``{\tt java -jar topcat-full.jar -stilts ...}''.
+%       More convenient (on Un*x), download the {\tt stilts} script
+%       into the same directory as {\tt topcat-full.jar} (or {\tt stilts.jar}).
+%       We will write just ``{\tt stilts}'' from now on.
+% \item Run a command:
+%       \vspace*{-2ex}
+%       \begin{verbatim}
+%       stilts calc expression="1+2"
+%       \end{verbatim}
+%       \vspace*{-4ex}
+%       should print out ``{\tt 3}''
+% \item Find the documentation for the {\tt calc} command in the manual
+%       (Appendix B).
+%       Look at the \lab{Usage} and \lab{Examples} subsections.
+% \item Get command-line help by running ``{\tt stilts calc help}'' and
+%       ``{\tt stilts calc help=expression}''.
+% \end{enumerate}
+% 
+% \subsection{Acquire data from TAP service}
+% 
+% \begin{enumerate}
+% \item We will use the {\tt tapquery} command;
+%       find the entry in the manual.
+% \item Go back to the TOPCAT TAP window to find the TAP URL at the
+%       bottom of the \lab{Select Service} tab (value of {\tt tapurl} parameter)
+% \item Use the ADQL from step \ref{step:hrd-data} of section \ref{sec:hrd-tap}
+%       (value of {\tt adql} parameter).
+% \item Run the query and output the result to a local FITS file {\tt hrd.fits}:
+%       \begin{verbatim}
+%           stilts tapquery \
+%             sync=false \
+%             tapurl=http://gea.esac.esa.int/tap-server/tap \
+%             adql="SELECT ra, dec, parallax, phot_g_mean_mag, \
+%                          phot_g_mean_mag, bp_rp \
+%                          astrometric_excess_noise, \
+%                          phot_bp_rp_excess_factor \
+%                   FROM gaiadr2.gaia_source \
+%                   WHERE parallax > 10 \
+%                     AND parallax_over_error > 10 \
+%                     AND phot_bp_mean_flux_over_error > 10 \
+%                     AND phot_rp_mean_flux_over_error > 10" \
+%             out=hrd.fits
+%       \end{verbatim}
+% \end{enumerate}
+% 
+% \subsection{Manipulate the downloaded table using {\tt tpipe}}
+% 
+% We will perform some processing on the downloaded table using
+% the {\tt tpipe} command.
+% This reads an input table, optionally performs operations on it,
+% and writes it to output, either to a file (in the same or different format)
+% or some other destination.  It works like a Unix pipeline.
+% 
+% The operations are defined by adding {\em filters} such as
+% ``{\tt select}'' (retain only some rows) or ``{\tt addcol}''
+% (add a new column).  Filters are specified by adding using zero
+% or more ``{\tt cmd=}'' parameters on the command line,
+% and documented in Section 6.1: ``Processing Filters'' of the STILTS manual.
+% 
+% The default output mode is write to a file,
+% but other options such as ``{\tt meta}'' (display column metadata),
+% ``{\tt count}'' (count rows) and ``{\tt stats}'' (calculate mean, st.dev etc)
+% are also available.
+% Select non-default output modes using the ``{\tt omode=}'' parameter
+% on the command line, documented in Section 6.4: ``Output Modes''
+% of the manual.
+% 
+% \begin{enumerate}
+% \item Count the rows in the query result table:
+%       \begin{verbatim}
+%       stilts tpipe in=hrd.fits omode=count
+%       \end{verbatim}
+%       \vspace*{-3ex}
+% \item See what columns the query result table has:
+%       \begin{verbatim}
+%       stilts tpipe in=hrd.fits omode=meta
+%       \end{verbatim}
+%       \vspace*{-3ex}
+% \item Prepare an expression for a new column giving absolute magnitude
+%       (see item \ref{item:calc-absmag} from section \ref{sec:plot-hrd})
+%       \label{item:hrd-addcol}
+% \item Prepare expressions for rows corresponding to the
+%       astrometry and photometry selections
+%       from sections \ref{sec:hrd-astrom} and \ref{sec:hrd-photom};
+%       go back to TOPCAT's \lab{Subsets} window, and see the expressions
+%       used to restrict the sources in the final HRD.
+%       \label{item:hrd-select}
+% \item Put items \ref{item:hrd-addcol} and \ref{item:hrd-select} together
+%       to produce a plot-ready table (note use of quotes):
+%       \begin{verbatim}
+%   stilts tpipe in=hrd.fits \
+%                cmd='addcol g_abs "phot_g_mean_mag + 5*log10(parallax/100)"' \
+%                cmd='select "astrometric_excess_noise < 1"' \
+%                cmd='select "phot_bp_rp_excess_factor < polyLine(bp_rp, -0.56,1.307, 0.03,1.192, \
+%                                                                        1.51,1.295, 4.31,1.808)"' \
+%                out=hrd_clean.fits
+%       \end{verbatim}
+%       \vspace*{-3ex}
+% \item Count the rows in the output file.
+% \end{enumerate}
+% 
+% \begin{minipage}[t]{11cm}
+%   \raggedright
+%   \vspace*{1ex}
+%   \subsection{Plot the diagram}
+% 
+%   \begin{enumerate}
+%   \item Plot the HRD on the screen using
+%         the 2d plotting command {\tt plot2plane}:
+%   \vspace*{-1ex}
+%   \begin{verbatim}
+%      stilts plot2plane layer=mark in=hrd_clean.fits \
+%                        x=bp_rp y=g_abs yflip=true
+%   \end{verbatim}
+%   \vspace*{-4ex}
+%   \item By default, a ``live'' plot shows up on the screen:
+%         use the mouse to zoom and drag it around like in TOPCAT.
+%   \item Output it to a graphics file instead,
+%         by adding the ``{\tt out}'' parameter,
+%         e.g.\ ``{\tt out=hrd.png}'' or ``{\tt out=hrd.pdf}''.
+%   \end{enumerate}
+% \end{minipage}
+% \begin{minipage}[t]{8cm}
+%   \begin{flushright}
+%   \vspace*{-0.6cm}
+%   \winfig{width=6cm}{hrd_plot2plane.png}
+%   \end{flushright}
+% \end{minipage}
+% 
+% \begin{minipage}[t]{11cm}
+%   \vspace*{2cm}
+%   \subsection{Use TOPCAT to refine the plot command}
+%   There are {\em lots\/} more options to the plot commands.
+% 
+%   \begin{enumerate}
+%   \item In the cleaned HRD plot from the end of section~\ref{sec:hrd},
+%         select the \ma{stilts.png}{STILTS} control at the lower left.
+%         This is the command that will reproduce the plot
+%         from the command line.
+%         It probably won't work from the command line exactly as written,
+%         because some tables and subsets only exist in TOPCAT
+%         (expected problems are shown in colour).
+%         But we have now generated the post-processed file using {\tt tpipe}.
+%   \item Hit the \lab{Window} button near the bottom to break out
+%         the command display into a separate window.
+%         You can see {\em all\/} the options (including defaults) with the
+%         \lab{Formatting}$\mid$\lab{Include Defaults} menu item.
+%   \item Now adjust plot options in the TOPCAT GUI and see how the command
+%         changes.
+%   \item Get the plot looking like you want in TOPCAT, then copy and paste
+%         the details into your STILTS {\tt plot2plane} command line.
+%   \item Experiment with changing the appearance by modifying the script.
+%   \end{enumerate}
+% \end{minipage}
+% \begin{minipage}[t]{8cm}
+%   \winfig{width=8cm}{hrd_stilts.png}
+% \end{minipage}
+% 
+%  Use the expression from section \ref{sec:hrd-stilts-plot},
+%  but replace the ``{\tt in}'' and ``{\tt icmd}'' values with
+%  ``{\tt in=hrd_clean.fits}'':
 
 \newpage
 
