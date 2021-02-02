@@ -13,7 +13,7 @@ PDFLATEX = pdflatex
 # (querying remote services and performing local operations) during
 # the tutorial.  You don't have to build these, but if you do, then
 # it's still possible to run much of the tutorial with no network access.
-DATA = m4.fits hy.fits ngc346.fits ngc346-gaia.fits ngc346xDR2.fits \
+DATA = m4.fits hy.fits ngc346.fits ngc346-gaia.fits ngc346xEDR3.fits \
        hrd-100pc.fits hrd-66pc.fits \
        hrd.fits hrd_clean.fits \
 
@@ -76,19 +76,19 @@ stilts.jar:
 	curl -L http://www.starlink.ac.uk/stilts/stilts.jar >$@
 
 m4.fits:
-	$(STILTS) tpipe in='http://gaia.ari.uni-heidelberg.de/cone/search?RA=245.89675&DEC=-26.52575&SR=0.3&VERB=2' \
+	$(STILTS) tpipe in='http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?RA=245.89675&DEC=-26.52575&SR=0.3&VERB=2' \
                out=$@
 
 hy.fits:
 	$(STILTS) tapquery \
             sync=true \
             tapurl=http://gea.esac.esa.int/tap-server/tap \
-            adql="SELECT ra, dec, pmra, pmdec, parallax, radial_velocity, \
+            adql="SELECT ra, dec, pmra, pmdec, parallax, dr2_radial_velocity, \
                          phot_g_mean_mag, bp_rp \
-                  FROM gaiadr2.gaia_source \
+                  FROM gaiaedr3.gaia_source \
                   WHERE parallax > 15 \
                   AND parallax_over_error > 5 \
-                  AND radial_velocity IS NOT NULL" \
+                  AND dr2_radial_velocity IS NOT NULL" \
             out=$@
 
 ngc346.fits:
@@ -100,9 +100,9 @@ ngc346-gaia.fits:
 	$(STILTS) tpipe in='http://gaia.ari.uni-heidelberg.de/cone/search?RA=14.771207&DEC=-72.1759&SR=0.05&VERB=1' \
                out=$@
 
-ngc346xDR2.fits: ngc346.fits
+ngc346xEDR3.fits: ngc346.fits
 	$(STILTS) cdsskymatch \
-               cdstable='GAIA DR2' find=all \
+               cdstable='GAIA EDR3' find=all \
                in=ngc346.fits ra=_RAJ2000 dec=_DEJ2000 radius=1 \
                out=$@
 
