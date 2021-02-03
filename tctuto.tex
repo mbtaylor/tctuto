@@ -748,14 +748,14 @@ for later batch use like this is a common pattern of work.
 \item Putting those together, we need to run
       \preverb
       \begin{verbatim}
-      stilts cone serviceurl='http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?' 
+      stilts cone serviceurl="http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?" 
                   lon=245.89675 lat=-26.52575 radius=0.3 out=m4.fits
       \end{verbatim}
       \postverb
-      (Note some values may need to be quoted to defend them from the shell
-      if they contain certain characters.)
-      The output is a VOTable {\tt m4.fits} (output format has been
-      determined by file extension here).
+      to give the output file {\tt m4.fits} --- the output format has been
+      determined by file extension
+      (you can write e.g.\ {\tt m4.vot} if you prefer).
+      \paragap
 \end{enumerate}
 
 {\bf Note:} some values containing whitespace or other strange
@@ -805,7 +805,7 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       into a table with one row per input table column):
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4.fits cmd='meta name units class'
+      stilts tpipe in=m4.fits cmd="meta name units class"
       \end{verbatim}
       \postverb
 \item For convenience, write a new table with only a few of the columns.
@@ -814,7 +814,7 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       The {\tt clearparams} filter removes per-table metadata.
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4.fits cmd='keepcols "ra dec pmra pmdec parallax"' cmd='clearparams *'
+      stilts tpipe in=m4.fits cmd="keepcols 'ra dec pmra pmdec parallax'" cmd='clearparams *'
                    out=m4mini.fits
       \end{verbatim}
       \postverb
@@ -828,7 +828,7 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       The using the {\tt head} filter keeps only the first few rows:
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4mini.fits cmd='head 10'
+      stilts tpipe in=m4mini.fits cmd="head 10"
       \end{verbatim}
       \postverb
       You can select rows using the {\tt select} filter, and combine
@@ -836,15 +836,15 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       Try both:
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4mini.fits cmd='head 10' cmd='select parallax>0'
-      stilts tpipe in=m4mini.fits cmd='select parallax>0' cmd='head 10'
+      stilts tpipe in=m4mini.fits cmd="head 10" cmd="select parallax>0"
+      stilts tpipe in=m4mini.fits cmd="select parallax>0" cmd="head 10"
       \end{verbatim}
       \postverb
       Why are they different?
 \item Add a column calculating estimated distance:
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4mini.fits cmd='addcol dist_est 1000/parallax' cmd='head 10'
+      stilts tpipe in=m4mini.fits cmd="addcol dist_est 1000/parallax" cmd="head 10"
       \end{verbatim}
       \postverb
 \item Write a new table containing only those rows in the comoving region
@@ -856,7 +856,7 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       {\tt sqrt(x*x,y*y)}.
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4mini.fits cmd='select "hypot(pmra+12.6,pmdec+18.9)<2"' out=cluster.fits
+      stilts tpipe in=m4mini.fits cmd="select 'hypot(pmra+12.6,pmdec+18.9)<2'" out=cluster.fits
       \end{verbatim}
       \postverb
       In fact TOPCAT can produce these geometric expressions for you:
@@ -867,15 +867,15 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       using the previous selection:
       \preverb
       \begin{verbatim}
-      stilts tpipe in=cluster.fits cmd='keepcols "parallax"' omode=stats
+      stilts tpipe in=cluster.fits cmd="keepcols 'parallax'" omode=stats
       \end{verbatim}
       \postverb
       or do it all in one go:
       \preverb
       \begin{verbatim}
-      stilts tpipe in=m4.fits cmd='select "hypot(pmra+12.6,pmdec+18.9)<2"'
-                              cmd='keepcols "parallax"'
-                              cmd='stats name mean stdev'
+      stilts tpipe in=m4.fits cmd="select 'hypot(pmra+12.6,pmdec+18.9)<2'"
+                              cmd="keepcols 'parallax'"
+                              cmd="stats name mean stdev"
       \end{verbatim}
       \postverb
 \end{enumerate}
