@@ -13,7 +13,8 @@ PDFLATEX = pdflatex
 # (querying remote services and performing local operations) during
 # the tutorial.  You don't have to build these, but if you do, then
 # it's still possible to run much of the tutorial with no network access.
-DATA = m4.fits hy.fits ngc346.fits ngc346-gaia.fits ngc346xEDR3.fits \
+DATA = m4.fits hy.fits hy3d.fits \
+       ngc346.fits ngc346-gaia.fits ngc346xEDR3.fits \
        hrd-100pc.fits hrd-66pc.fits \
        hrd.fits hrd_clean.fits \
        m4mini.fits
@@ -67,7 +68,7 @@ $(DOC).pdf: $(DOC).tex
         rm -f $@
 
 .pdf.view:
-	test -f $< && acroread -geometry +50+50 -openInNewWindow $<
+	test -f $< && okular $<
 
 ./stilts: stilts.jar
 	unzip stilts.jar stilts
@@ -91,15 +92,32 @@ hy.fits:
 	$(STILTS) tapquery \
             sync=true \
             tapurl=https://gea.esac.esa.int/tap-server/tap \
-            adql="SELECT ra, dec, pmra, pmdec, parallax, \
-                         dr2_radial_velocity, bp_rp, \
+            adql="SELECT ra, dec, pmra, pmdec, parallax, radial_velocity, \
+                         phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, \
+                         bp_rp, \
                          phot_g_mean_mag + 5*log10(parallax/100) as g_abs \
-                  FROM gaiaedr3.gaia_source \
+                  FROM gaiadr3.gaia_source \
                   WHERE parallax > 15 \
                   AND parallax_over_error > 5 \
-                  AND dr2_radial_velocity IS NOT NULL" \
+                  AND radial_velocity IS NOT NULL" \
             out=$@
 
+hy3d.fits: hy.fits
+	$(STILTS) tpipe \
+            in=hy.fits \
+            cmd='colmeta -unit mag g_abs' \
+            cmd='addcol xyz astromXYZ(ra,dec,parallax)' \
+            cmd='addcol -units pc -ucd pos.cartesian.x x xyz[0]' \
+            cmd='addcol -units pc -ucd pos.cartesian.y y xyz[1]' \
+            cmd='addcol -units pc -ucd pos.cartesian.z z xyz[2]' \
+            cmd='delcols xyz' \
+            cmd='addcol uvw astromUVW(array(ra,dec,parallax,pmra,pmdec,radial_velocity))' \
+            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.x" u uvw[0]'\
+            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.y" v uvw[1]'\
+            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.z" w uvw[2]'\
+            cmd='delcols uvw' \
+            out=$@
+ 
 ngc346.fits:
 	$(STILTS) tpipe \
                in='http://vizier.u-strasbg.fr/viz-bin/votable?-source=J%2fApJS%2f166%2f549&-oc.form=dec&-out.meta=DhuL&-c=14.771207+-72.1759&-c.rd=1.0&-out.add=_RAJ%2C_DEJ%2C_r&-out.max=100000' \

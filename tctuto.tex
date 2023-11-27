@@ -61,7 +61,7 @@
 \tableofcontents
 
 \vspace{3ex}
-This tutorial uses data from Gaia Early Data Release 3 (EDR3) \cite{edr3}
+This tutorial uses data from Gaia Data Release 3 (DR3) \cite{dr3}
 to lead you through some of the capabilities of TOPCAT and STILTS.
 For best results, you should have the manuals to hand:
 \url{http://www.starlink.ac.uk/topcat/sun253/} and
@@ -85,9 +85,9 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   \item Open the \mb{CONE_DIALOG.png}{VO}{Cone Search} window \\
         (i.e.\ use the \lab{Cone Search} submenu of the \lab{VO} menu
          in the main topcat window).
-  \item Fill in \entry{Keywords}{gaia edr3}, and hit \lab{Find Services}.
+  \item Fill in \entry{Keywords}{gaia dr3}, and hit \lab{Find Services}.
   \item There are a few options, that should mostly give similar results.
-        The one with Short Name ``{\tt eDR3 lite Cone}'' is a good choice.
+        The one with Short Name ``{\tt DR3 lite Cone}'' is a good choice.
         Select it by clicking on its row, and the
         partial URL of the service appears in the \lab{Cone URL} field.
   \item Fill in \entry{Object Name}{M4}, then hit \lab{Resolve} to fill in
@@ -100,6 +100,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         which retrieves about 20\,000 rows,
         and maybe \entry{Verbosity}{1},
         which reduces the number of columns requested.
+        Or try it with another of the listed services.
   \item Use the \mb{skyplot_button.png}{Graphics}{Sky Plot} window
         to see the positions on the sky.
   \item Play with the plot.  Note overdense regions are coloured darker.
@@ -218,7 +219,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   with smallish errors.
   Rule of thumb for single measurements:
   if $\varpi/\sigma_\varpi>5$ it's probably OK.
-  See Luri et al.\ 2018 \cite{luri} for full discussion.
+  See Luri et al.\ 2018 \cite{luri} for fuller discussion.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{m4_subsets.png}
@@ -262,15 +263,15 @@ So we need to make a more sophisticated query using TAP.
   their metadata.
   \begin{enumerate}
   \item Browse the table list on the left,
-        The tables in the {\tt gaiaedr3} schema
-        are the ones with Gaia EDR3 data.
-  \item Select table {\tt gaiaedr3.gaia\_source} and look at
+        The tables in the {\tt gaiadr3} schema
+        are the ones with Gaia DR3 data.
+  \item Select table {\tt gaiadr3.gaia\_source} and look at
         \lab{Table} and \lab{Columns} tabs,
         to see information about available columns.
   \item Look in the \lab{Service} tab to see information about the service
   \item Look in the \lab{Hints} tab for a very basic ADQL cheat sheet
   \item Type in to the bottom panel some very simple ADQL:\\
-        ``{\tt SELECT TOP 10 ra, dec FROM gaiaedr3.gaia\_source}''
+        ``{\tt SELECT TOP 10 ra, dec FROM gaiadr3.gaia\_source}''
   \item Note that syntax errors (including partial or misspelt tables/columns)
         are highlighted in red.
   \item Hit \lab{Run Query} to run the query;
@@ -282,15 +283,15 @@ So we need to make a more sophisticated query using TAP.
   In the TAP window, execute this query:
   \begin{verbatim}
     SELECT ra, dec, pmra, pmdec, parallax,
-           dr2_radial_velocity, bp_rp,
+           radial_velocity, bp_rp,
            phot_g_mean_mag + 5*log10(parallax/100) as g_abs
-    FROM gaiaedr3.gaia_source
+    FROM gaiadr3.gaia_source
     WHERE parallax > 15
     AND parallax_over_error > 5
-    AND dr2_radial_velocity IS NOT NULL
+    AND radial_velocity IS NOT NULL
   \end{verbatim}
   \vspace*{-2ex}
-  The result should contain about 25\,000 rows.
+  The result should contain about 60\,000 rows.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{hy_tapsel.png}
@@ -304,7 +305,7 @@ So we need to make a more sophisticated query using TAP.
 The query is for all the nearby sources
 (nominally within 1000/15 $\approx$ 66\,parsec)
 with observed radial velocities
-(only about 7 million DR2/EDR3 sources have RV)
+(only about 34 million out of 2 billion DR3 sources have RV)
 and good determinations of parallax.
 The fact that parallax error is $\leq$20\% means that it's OK
 to invert parallax to calculate distance and absolute magnitude.
@@ -335,16 +336,14 @@ TOPCAT's {\em expression language\/} can help.
         and {\tt astromXYZ} functions.
         The \lab{Examples} items in the function documentation are useful;
         for use with the {\tt gaia\_source} catalogue,
-        you can often just cut and paste, though note
-        ``{\tt radial\_velocity}'' may need to be changed to
-        ``{\tt dr2\_radial\_velocity}''.
+        you can often just cut and paste
   \item Open the \mb{cols_button.png}{Views}{Column Info} window
         and choose the \mb{plus_button.png}{Columns}{New Synthetic Column}
         action
   \item Create a new column giving Cartesian velocity components:
         \entry{Name}{uvw}, \entry{Units}{km/s} and for \lab{Expression}:
         \begin{verbatim}
-  astromUVW(array(ra, dec, parallax, pmra, pmdec, dr2_radial_velocity))
+   astromUVW(array(ra, dec, parallax, pmra, pmdec, radial_velocity))
         \end{verbatim}
         \vspace*{-0.5cm}
         That calculates velocities along ICRS axes.
@@ -383,8 +382,8 @@ TOPCAT's {\em expression language\/} can help.
         Click the little \buttimg{navig_help.png} button at bottom left
         for navigation help;
         the most useful actions are mouse wheel
-        (2-fingered up/down drag on some trackpads) to zoom,
-        and right click on a dense region to recenter.
+        (2-fingered drag on some trackpads) to zoom,
+        and right click (or CTRL-click) on a dense region to recenter.
   \item Navigate so only the objects in the overdense region
         (about 200 of them?) are visible inside the wireframe ---
         these are the Hyades.
@@ -451,7 +450,8 @@ TOPCAT's {\em expression language\/} can help.
   \subsection*{Bonus}
   \begin{itemize}
     \item Can you find any other clusters in velocity space?
-    \item Try refining the selection by localising in position space too.
+    \item Try refining the selection by localising in position space
+          or HR space too.
     \item What is the mean distance to the Hyades?
     \item Try using Aladin and SAMP along with TOPCAT
           to investigate the outliers.
@@ -494,9 +494,9 @@ at J2016.0.
   \end{enumerate}
   Alternatively, you could download the table from the VizieR web page.
 \end{minipage}
-\begin{minipage}[t]{8cm}
+\begin{minipage}[t]{7.5cm}
   \vspace*{-1cm}
-  \winfig{width=8cm}{n3_vizier.png}
+  \winfig{width=7.5cm}{n3_vizier.png}
 \end{minipage}
 
 
@@ -506,17 +506,17 @@ at J2016.0.
 \begin{minipage}[t]{11cm}
   \raggedright
   Now we want to find associations of the HST objects with sources
-  from Gaia EDR3.
+  from Gaia DR3.
   Use the CDS X-Match service from TOPCAT.
   This uploads a local table to the CDS X-Match service,
-  where the match is made against the Gaia EDR3 catalogue
+  where the match is made against the Gaia DR3 catalogue
   (or any other catalogue in VizieR).
   The resulting matched catalogue is then received as a new
   table in TOPCAT.
   \begin{enumerate}
   \item Open the \mb{xmatch_button.png}{VO}{CDS Upload X-Match} window
   \item Fill in the fields:\\
-        \entry{VizieR Table ID/Alias}{GAIA EDR3} \\
+        \entry{VizieR Table ID/Alias}{Gaia DR3 (Epoch 2016)} \\
         \entry{Input Table}{J\_ApJS\_166\_549\_table2} \\
         (or whatever the HST table is called) \\
         \entry{RA column}{\_RAJ000}, \entry{Dec column}{\_DEJ2000}  \\
@@ -529,14 +529,10 @@ at J2016.0.
   \item Look at the columns of the new table (all HST followed by all Gaia)
         in the \mb{cols_button.png}{Views}{Column Info} window
   \end{enumerate}
-Note: the match is done with Gaia coordinates rolled back
-(using Gaia proper motions) to J2000.0.
-These propagated columns are in the matched table as
-{\tt ra\_epoch2000}, {\tt dec\_epoch2000}.
 \end{minipage}
-\begin{minipage}[t]{8cm}
+\begin{minipage}[t]{7.5cm}
   \vspace*{-0.5cm}
-  \winfig{width=8cm}{n3_cdsxmatch.png}
+  \winfig{width=7.5cm}{n3_cdsxmatch.png}
 \end{minipage}
 
 
@@ -553,11 +549,11 @@ These propagated columns are in the matched table as
   \item Overplot the actual matches.
         Add a new {Pair} layer:
         \mb{pairs_button.png}{Layers}{Add Pair Control} and fill in:\\
-        \entry{Table}{4xGAIA EDR3}
+        \entry{Table}{4xGAIA DR3}
               (or whatever the xmatch result table is called)
         and both sets of coordinates: \\
         \entry{Lon(1)}{\_RAJ2000}, \entry{Lat(1)}{\_DEJ2000} (HST) \\
-        \entry{Lon(2)}{ra}, \entry{Lat(2)}{dec} (Gaia)
+        \entry{Lon(2)}{RAdeg}, \entry{Lat(2)}{DEdeg} (Gaia)
   \item Zoom in to look at the associations.  There are too many!
         What is this plot telling you?
   \item You can fiddle around with the \lab{Form} tab to make the
@@ -587,9 +583,9 @@ These propagated columns are in the matched table as
         Open \mb{cols_button.png}{Views}{Column Info} window, \\
         then define new columns using
         \mb{plus_button.png}{Columns}{New Synthetic Column}: \\
-        \entry{Name}{deltaRa}, \entry{Expression}{3600*(ra - \_RAJ2000)},
+        \entry{Name}{deltaRa}, \entry{Expression}{3600*(RAdeg - \_RAJ2000)},
                                \entry{Units}{arcsec} \\
-        \entry{Name}{deltaDec}, \entry{Expression}{3600*(dec - \_DEJ2000)},
+        \entry{Name}{deltaDec}, \entry{Expression}{3600*(DEdeg - \_DEJ2000)},
                                 \entry{Units}{arcsec}
   \item Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window, \\
         plot \entry{X}{deltaRa}, \entry{Y}{deltaDec}
@@ -608,15 +604,6 @@ These propagated columns are in the matched table as
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{n3_truematch.png}
 \end{minipage}
-
-\paragap
-Note: in the above we have used the Gaia columns {\tt ra} and {\tt dec},
-giving the positions observed at J2016.0.
-It would be a bit better to use {\tt ra\_epoch2000} and {\tt dec\_epoch2000},
-the positions rolled back to J2000.0 using Gaia proper motions,
-since the HST observations were at about J2014.6, and even better to
-apply proper motions to get the positions at J2014.6.
-But the differences (motion over 10--15 years) are fairly small.
 
 
 \begin{minipage}[t]{11cm}
@@ -667,11 +654,8 @@ But the differences (motion over 10--15 years) are fairly small.
         (as in section \ref{sec:histo-mean})
         to find the mean values of $\delta$\,RA, $\delta$\,Dec for
         the true matches.  What do these values tell you?
-  \item The match done here is between Gaia positions at J2016.0 and
+  \item The matches done here are between Gaia positions at J2016.0 and
         HST positions taken at approximately J2004.6.
-        When using the X-Match service in section \ref{sec:cdsxmatch},
-        Gaia proper motions were automatically applied
-        to predict the Gaia positions at J2000.0.
         Use the {\tt epochProp} function in the expression language
         to do the match with the positions as Gaia proper motions
         predict for J2004.6.  Does it make much difference?
@@ -748,7 +732,7 @@ for later batch use like this is a common pattern of work.
 \item Putting those together, we need to run
       \preverb
       \begin{verbatim}
-      stilts cone serviceurl="http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?" 
+      stilts cone serviceurl="http://dc.g-vo.org/gaia/q3/cone/scs.xml?" 
                   lon=245.89675 lat=-26.52575 radius=0.3 out=m4.fits
       \end{verbatim}
       \postverb
@@ -825,7 +809,7 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       \end{verbatim}
       \postverb
 \item View a few rows of the table.
-      The using the {\tt head} filter keeps only the first few rows:
+      Then using the {\tt head} filter keeps only the first few rows:
       \preverb
       \begin{verbatim}
       stilts tpipe in=m4mini.fits cmd="head 10"
@@ -940,14 +924,14 @@ Lindegren et al.\ 2018 \cite{lindegren}.
     SELECT ra, dec, parallax, phot_g_mean_mag, bp_rp,
            astrometric_excess_noise,
            phot_bp_rp_excess_factor
-    FROM gaiadr2.gaia_source
+    FROM gaiadr3.gaia_source
     WHERE parallax > 10
       AND parallax_over_error > 10
       AND phot_bp_mean_flux_over_error > 10
       AND phot_rp_mean_flux_over_error > 10
     \end{verbatim}
     \vspace*{-3ex}
-    You should get a table with 338\,833 sources;
+    You should get a table with 306\,517 sources;
     they are nominally within 100\,pc, and have $\varpi$, BP and RP
     with small errors.  In particular, the parallax error is small enough
     that $\varpi^{-1}$ is a reasonable estimate of distance.
@@ -1042,7 +1026,7 @@ But you didn't need to know that to improve the data like this.
         subset is plotted (\lab{Subsets} tab).
         Now there are fewer spurious sources.
   \end{enumerate}
-  Leave this session open, we'll need some of it for the next section.
+% Leave this session open, we'll need some of it for the next section.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{hrd_photom.png}
@@ -1262,11 +1246,11 @@ Go back and reproduce all the other exercises using STILTS!
 
 
 \begin{thebibliography}{9}
-\bibitem{edr3}
+\bibitem{dr3}
    Gaia Collaboration et al.,
-   ``Gaia Early Data Release 3: Summary of the contents and survey properties'',
+   ``Gaia Data Release 3: Summary of the contents and survey properties'',
    Astronomy and Astrophysics
-   {\tt https://doi.org/10.1051/0004-6361/202039657} (2021)
+   {\tt https://doi.org/10.1051/0004-6361/202243940} (2023)
 \bibitem{luri}
    X.Luri et al.,
    ``Gaia DR2: Using Gaia parallaxes'',
