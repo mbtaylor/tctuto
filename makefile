@@ -105,17 +105,11 @@ hy.fits:
 hy3d.fits: hy.fits
 	$(STILTS) tpipe \
             in=hy.fits \
-            cmd='colmeta -unit mag g_abs' \
-            cmd='addcol xyz astromXYZ(ra,dec,parallax)' \
-            cmd='addcol -units pc -ucd pos.cartesian.x x xyz[0]' \
-            cmd='addcol -units pc -ucd pos.cartesian.y y xyz[1]' \
-            cmd='addcol -units pc -ucd pos.cartesian.z z xyz[2]' \
-            cmd='delcols xyz' \
-            cmd='addcol uvw astromUVW(array(ra,dec,parallax,pmra,pmdec,radial_velocity))' \
-            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.x" u uvw[0]'\
-            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.y" v uvw[1]'\
-            cmd='addcol -units km/s -ucd "phys.veloc;pos.cartesian.z" w uvw[2]'\
-            cmd='delcols uvw' \
+            cmd="colmeta -unit mag g_abs" \
+            cmd="addcol -units pc -ucd pos.cartesian \
+                        xyz astromXYZ(ra,dec,parallax)" \
+            cmd="addcol -units km/s -ucd 'phys.veloc;pos.cartesian' \
+                        uvw astromUVW(array(ra,dec,parallax,pmra,pmdec,radial_velocity))" \
             out=$@
  
 ngc346.fits:

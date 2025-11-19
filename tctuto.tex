@@ -51,9 +51,9 @@
 
 \begin{description}
   \item[TOPCAT:] \turl{http://www.starlink.ac.uk/topcat/}
-                 {\em (version 4.7 or later recommended)}
+                 {\em (version 4.9-1 or later recommended)}
   \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
-                 {\em (version 3.2 or later recommended)}
+                 {\em (version 3.4-1 or later recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
   \item[Version:] {\tt \input{version}}
 \end{description}
@@ -367,13 +367,10 @@ TOPCAT's {\em expression language\/} can help.
   \begin{enumerate}
   \item Plot points in 3-d space:
         \mb{plot2cube.png}{Graphics}{Cube Plot},
-        \entry{X}{uvw[0]},
-        \entry{Y}{uvw[1]},
-        \entry{Z}{uvw[2]}.
+        \entry{Coordinates}{Vector},
+        \entry{XYZ Vector}{uvw}.
         Note, you can type in any expression for the plot coordinates,
         you don't have to just select from available columns.
-        The {\tt uvw} column itself doesn't appear in the selection list,
-        since it's not a scalar.
   \item Select \entry{Mode}{\buttimg{MODE_DENSITY.png}density}
         in the \lab{Form} tab.  You can change the colour map to taste
         using the \lab{Density Shader} selector.
@@ -723,8 +720,6 @@ for later batch use like this is a common pattern of work.
       stilts cone help
       \end{verbatim}
       \postverb
-      There is a documentation bug! (STILTS v3.4); the {\tt out} parameter
-      is also required to give an output file
 \item Find out the cone search parameters we used in \ref{sec:m4-cone}.
       This includes the service URL (from the \lab{Cone URL} field)
       and the central RA (longitude) and Dec (latitude) parameters of M4,
