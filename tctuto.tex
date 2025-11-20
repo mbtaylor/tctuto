@@ -52,7 +52,7 @@
 
 \begin{description}
   \item[TOPCAT:] \turl{http://www.starlink.ac.uk/topcat/}
-                 {\em (version 4.9-1 or later recommended)}
+                 {\em (version 4.10-2 or later recommended)}
   \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
                  {\em (version 3.4-1 or later recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
@@ -810,7 +810,15 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       \end{verbatim}
       \postverb
       You can then examine this new file {\tt m4mini.fits}
-      by loading it into TOPCAT, or by using other stilts commands
+      by loading it into TOPCAT
+      (from the Load Window or by running ``{\tt topcat m4mini.fits}''
+      from the command line), or by using other STILTS commands, for instance:
+      \preverb
+      \begin{verbatim}
+      stilts tpipe in=m4mini.fits
+      stilts tpipe in=m4mini.fits omode=gui
+      \end{verbatim}
+      \postverb
 \item Calculate statistics using the {\tt stats} output mode:
       \preverb
       \begin{verbatim}
@@ -888,12 +896,45 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       Just add an output parameter like ``{\tt out=plot.png}'' or
       ``{\tt out=plot.pdf}'' to the above {\tt plot2sky} command
       to write static output files.
-\item Interoperate with TOPCAT:
-      STILTS plotting commands can get quite complicated.
-      If you have a plot in TOPCAT and want to reproduce it in STILTS,
-      look at the \ma{stilts.png}{STILTS} control,
-      which shows you the invocation needed to reproduce it.
 \end{enumerate}
+
+
+\subsection{Get help from TOPCAT}
+
+STILTS has a steeper learning curve than TOPCAT, and some of the commands,
+especially plotting commands, can get quite complicated.
+In many cases, TOPCAT can tell you the STILTS command that is equivalent
+to what you see in the GUI.
+Look out for the \ma{stilts.png}{STILTS} control in the control stack
+bottom left of the plot windows, and in the tool bars for
+crossmatch and VO-related windows.
+\paragap
+
+\begin{minipage}[t]{12cm}
+  \begin{enumerate}
+  \item Set up the Cone Search window like in Section~\ref{sec:m4-cone}.
+  \item Click the \ma{stilts.png}{STILTS} button in the toolbar.
+        This will pop up a window with the STILTS command that will
+        perform that cone search.
+  \item Note changing selections and controls in the Cone Search window
+        the settings of the displayed STILTS command.
+  \item Copy and paste the text into a terminal and execute it
+        (you can use the \mb{clipboard.png}{Edit}{Copy} button
+        or do it by hand)
+        and it should create a new file with the cone search result.
+  \item Click the \mb{stiltshelp.png}{Help}{Help for STILTS Command} button,
+        and it should open the relevant page from the manual
+        in your web browser.
+  \item Use the information to fiddle with the parameters of the command ---
+        change the sky position or search radius and execute it again.
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{7cm}
+  \vspace*{1cm}
+  \winfig{width=7cm}{stilts_cone.png}
+\end{minipage}
+
+\subsection{... and more}
 
 There is {\em lots} more that {\tt tpipe}, and STILTS in general, can do.
 Explore the manual!
