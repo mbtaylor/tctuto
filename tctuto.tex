@@ -4,6 +4,7 @@
 \usepackage{color}
 \usepackage{xcolor}
 \usepackage{url}
+\usepackage{upquote}  % makes verbatim single quotes come out cut'n'pastable
 % \usepackage{parskip}
 
 \setlength{\unitlength}{1cm}
@@ -69,7 +70,8 @@ For best results, you should have the manuals to hand:
 
 \newpage
 
-\section{Cluster identification \#1: Messier 4 in proper motion space}
+\section{Cluster identification \#1: M4 in proper motion space
+         using Cone Search}
 \label{sec:m4}
 
 \begin{minipage}[t]{11cm}
@@ -195,7 +197,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         select the \lab{General} tab, and set
         \lab{Normalise} to \lab{maximum}.
         Return to \ma{histoplot.png}{histogram layer} control
-  \item Zoom in horizontally (mouse below X axis, use drag and wheel/CTRL-drag)
+  \item Zoom in horizontally (mouse below X axis, use wheel/CTRL-drag)
         to read off the comoving peak/average parallax.
         Note the comoving (cluster) distribution is different from the
         background sample.
@@ -209,7 +211,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         (1000/parallax in mas = distance in parsec).
   \item To do this without plotting, you can read off the mean and S.D.\ for
         parallax in the \mb{stats_button.png}{Views}{Column Statistics} window
-        for the \lab{comoving} subset.
+        (from the main window) for the \lab{comoving} subset.
   \end{enumerate}
 
   {\bf Note: careful when inverting parallaxes!}\\
@@ -233,7 +235,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 
 \newpage
 
-\section{Cluster identification \#2: Hyades in 3-D velocity space}
+\section{Cluster identification \#2: Hyades in 3-D velocity space using TAP}
 
 This example locates the Hyades open cluster in 3-dimensional velocity space,
 using Gaia's proper motion and radial velocity observations.
@@ -262,7 +264,8 @@ So we need to make a more sophisticated query using TAP.
   Use the TAP window to explore the tables that are present and
   their metadata.
   \begin{enumerate}
-  \item Browse the table list on the left,
+  \item Browse the table list on the left.
+        Click on the ``handles'' to expand the branches (schemas).
         The tables in the {\tt gaiadr3} schema
         are the ones with Gaia DR3 data.
   \item Select table {\tt gaiadr3.gaia\_source} and look at
@@ -280,7 +283,9 @@ So we need to make a more sophisticated query using TAP.
 
   \subsection{Acquire astrometric data}
 
-  In the TAP window, execute this query:
+  In the TAP window, open a new query tab using the
+  \ma{addtab_button.png}{Add Tab} button above the ADQL entry panel
+  and run this query:
   \begin{verbatim}
     SELECT ra, dec, pmra, pmdec, parallax,
            radial_velocity, bp_rp,
@@ -378,12 +383,13 @@ TOPCAT's {\em expression language\/} can help.
         This takes a bit of practice, but it's fun once you work out how.
         Click the little \buttimg{navig_help.png} button at bottom left
         for navigation help;
-        the most useful actions are mouse wheel
-        (2-fingered drag on some trackpads) to zoom,
+        the most useful actions are drag to rotate,
+        mouse wheel (2-fingered drag on some trackpads) to zoom,
         and right click (or CTRL-click) on a dense region to recenter.
   \item Navigate so only the objects in the overdense region
-        (about 200 of them?) are visible inside the wireframe ---
-        these are the Hyades.
+        (about 200 of them? see the count at the bottom right of the window)
+        are visible inside the wireframe --- these are the Hyades,
+        which all have similar 3D velocities.
   \item Use \mb{spoints5.png}{Subsets}{Subset From Visible},
         \entry{Name}{hyades}, \lab{Add Subset}.
   \end{enumerate}
@@ -434,7 +440,7 @@ TOPCAT's {\em expression language\/} can help.
         to flip it the right way round.
   \item Use the \lab{Subsets} tab to make sure both \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
-        Hyades sit on a nice tight main sequence!
+        Hyades should (mostly) sit on a nice tight main sequence!
   \item There are a few outliers.
         Click on them, see the position show up in the sky plot too.
         In some cases, you can see by sky position that they are non-members.
@@ -562,6 +568,9 @@ at J2016.0.
   Here, you can see it was crucial to understand the results:
   most of these matches are spurious, because there is a high density
   of HST sources.
+
+  \paragap
+  Leave this plot open, we will come back to it after the next section.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \vspace*{-0.5cm}
@@ -593,9 +602,12 @@ at J2016.0.
         Why do you think this offset is not zero?
   \item Make a colour-colour diagram combining HST and Gaia photometry: \\
         Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window,
-        plot \entry{X}{Vmag-Imag}, \entry{Y}{bp\_rp},
+        plot \entry{X}{Vmag-Imag}, \entry{Y}{BPmag-RPmag},
         display \lab{true\_match} subset only. \\
         What are the two populations?
+        % looks like the main sequence and giant branch -
+        % actually the V-I vs V plot is more revealing,
+        % because the HST data goes much deeper(?)
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{8cm}
@@ -666,7 +678,7 @@ at J2016.0.
 \end{minipage}
 
 \newpage
-\section{Messier 4 in proper motion space using STILTS}
+\section{M4 in proper motion space using STILTS}
 
 In this section we will re-do the determination of the distance to M4
 from section \ref{sec:m4},
@@ -797,6 +809,8 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
                    out=m4mini.fits
       \end{verbatim}
       \postverb
+      You can then examine this new file {\tt m4mini.fits}
+      by loading it into TOPCAT, or by using other stilts commands
 \item Calculate statistics using the {\tt stats} output mode:
       \preverb
       \begin{verbatim}
