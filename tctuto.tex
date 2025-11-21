@@ -3,7 +3,7 @@
 \usepackage{graphicx}
 \usepackage{color}
 \usepackage{xcolor}
-\usepackage{url}
+\usepackage[pdfborder={0 0 0}]{hyperref}
 \usepackage{upquote}  % makes verbatim single quotes come out cut'n'pastable
 % \usepackage{parskip}
 
@@ -35,7 +35,13 @@
 \newcommand{\lab}[1]{{\bf #1}}
 \newcommand{\ma}[2]{\buttimg{#1}~\lab{#2}}
 \newcommand{\mb}[3]{\buttimg{#1}~\lab{#2}$\mid$\lab{#3}}
-\newcommand{\turl}[1]{{\color{blue}\url{#1}}}
+\newcommand{\burl}[1]{{\color{blue}\texttt{\url{#1}}}}
+\newcommand{\bhref}[2]{\href{#1}{{\color{blue}#2}}}
+\newcommand{\tcmanref}[2]
+               {\bhref{http://www.starlink.ac.uk/topcat/sun253/#1.html}{#2}}
+\newcommand{\stiltsmanref}[2]
+               {\bhref{http://www.starlink.ac.uk/stilts/sun256/#1.html}{#2}}
+\newcommand{\stiltsttref}[1]{\stiltsmanref{#1}{\texttt{#1}}}
 \newcommand{\paragap}{\vspace{1.5ex}}
 \newcommand{\entry}[2]{\lab{#1}: ``\texttt{#2}''}
 
@@ -58,9 +64,9 @@
 \maketitle
 
 \begin{description}
-  \item[TOPCAT:] \turl{http://www.starlink.ac.uk/topcat/}
+  \item[TOPCAT:] \burl{http://www.starlink.ac.uk/topcat/}
                  {\em (version 4.10-2 or later recommended)}
-  \item[STILTS:] \turl{http://www.starlink.ac.uk/stilts/}
+  \item[STILTS:] \burl{http://www.starlink.ac.uk/stilts/}
                  {\em (version 3.4-1 or later recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
   \item[Version:] {\tt \input{version}}
@@ -71,9 +77,10 @@
 \vspace{3ex}
 This tutorial uses data from Gaia Data Release 3 (DR3) \cite{dr3}
 to lead you through some of the capabilities of TOPCAT and STILTS.
+It assumes you have TOPCAT, and hence STILTS, installed.
 For best results, you should have the manuals to hand:
-\url{http://www.starlink.ac.uk/topcat/sun253/} and
-\url{http://www.starlink.ac.uk/stilts/sun256/}.
+\burl{http://www.starlink.ac.uk/topcat/sun253/} and
+\burl{http://www.starlink.ac.uk/stilts/sun256/}.
 
 \newpage
 
@@ -110,6 +117,9 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
         and maybe \entry{Verbosity}{1},
         which reduces the number of columns requested.
         Or try it with another of the listed services.
+  \item Examine the loaded table: look at the
+        \mb{browser1.png}{Views}{Table Data} and
+        \mb{cols_button.png}{Views}{Column Info} windows
   \item Use the \mb{skyplot_button.png}{Graphics}{Sky Plot} window
         to see the positions on the sky.
   \item Play with the plot.  Note overdense regions are coloured darker.
@@ -335,7 +345,7 @@ The Hyades should be in there somewhere.  Can we find them?
 We have the astrometric quantities measured by Gaia,
 which contain full phase space information,
 but need transformations to yield Cartesian position/velocity coordinates.
-TOPCAT's {\em expression language\/} can help.
+TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
 \vspace*{3ex}
 
 \begin{minipage}[t]{11cm}
@@ -703,7 +713,7 @@ for later batch use like this is a common pattern of work.
 \begin{enumerate}
 \item Unlike TOPCAT, you can't bluff your way through STILTS
       by pointing'n'clicking; you'll need some documentation.
-      Find the manual here at \turl{http://www.starlink.ac.uk/stilts/sun256/}
+      Find the manual \burl{http://www.starlink.ac.uk/stilts/sun256/}
       or maybe just google for ``stilts''
       and go to the \lab{Documentation} section.
 \item Make sure you have it installed.
@@ -723,7 +733,7 @@ for later batch use like this is a common pattern of work.
       \vspace*{-4ex}
       should print out ``{\tt 3}''
 \item Find the documentation for the {\tt calc} command in the manual
-      (Appendix~B).
+      \stiltsmanref{calc}{Appendix~B}.
       Look at the \lab{Usage} and \lab{Examples} subsections.
 \item Get command-line help by running ``{\tt stilts calc help}'' and
       ``{\tt stilts calc help=expression}''.
@@ -735,8 +745,8 @@ for later batch use like this is a common pattern of work.
 
 \begin{enumerate}
 \item Investigate the STILTS {\tt cone} command;
-      see the documentation in Appendix B of the manual
-      (\url{http://www.starlink.ac.uk/stilts/sun256/cone.html})
+      see the \stiltsmanref{cone}{\texttt{cone} documentation}
+      in Appendix~B of the manual
       and run
       \preverb
       \begin{verbatim}
@@ -756,38 +766,45 @@ for later batch use like this is a common pattern of work.
       \postverb
       to give the output file {\tt m4.fits} --- the output format has been
       determined by file extension
-      (you can write e.g.\ {\tt m4.vot} if you prefer).
+      (you can write e.g.\ {\tt m4.vot} if you prefer a different format).
       \paragap
 \end{enumerate}
 
 {\bf Note:} some values containing whitespace or other strange
 characters need to be quoted to prevent the shell expanding them.
 This quoting can get a bit messy.
+A good tip is to avoid spaces where you don't need them, e.g.\ in expressions.
 I {\em believe\/} the commands as written in this section will work
 in common Un*x shells, also Windows command prompt and PowerShell.
 
 \subsection{Manipulate the downloaded table using {\tt tpipe}}
 
 We will perform some processing on the downloaded table using
-the {\tt tpipe} command.
+the \stiltsttref{tpipe} command.
 This reads an input table, optionally performs operations on it,
 and writes it to output, either to a file (in the same or different format)
 or some other destination.  It works like a Unix pipeline.
 \paragap
 
 The operations are defined by adding {\em filters} such as
-``{\tt select}'' (retain only some rows) or ``{\tt addcol}''
-(add a new column).  Filters are specified by adding using zero
+``\stiltsttref{select}'' (retain only some rows) or
+``\stiltsttref{addcol}'' (add a new column).
+Filters are specified by adding using zero
 or more ``{\tt cmd=}'' parameters on the command line,
-and documented in Section 6.1: ``Processing Filters'' of the STILTS manual.
+and documented in
+\stiltsmanref{filterSteps}{Section 6.1: ``Processing Filters''}
+of the STILTS manual.
 \paragap
 
 The default output mode is write to a file,
-but other options such as ``{\tt meta}'' (display column metadata),
-``{\tt count}'' (count rows) and ``{\tt stats}'' (calculate mean, st.dev etc)
+but other options such as
+``\stiltsmanref{mode-meta}{\texttt{meta}}'' (display column metadata),
+``\stiltsmanref{mode-count}{\texttt{count}}'' (count rows) and
+``\stiltsmanref{mode-stats}{\texttt{stats}}'' (calculate mean, st.dev etc)
 are also available.
 Select non-default output modes using the ``{\tt omode=}'' parameter
-on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
+on the command line, documented in
+\stiltsmanref{outModes}{Section 6.4: ``Output Modes''} of the manual.
 
 \begin{enumerate}
 \item Count the rows in the query result table:
@@ -933,8 +950,8 @@ crossmatch and VO-related windows.
   \item Click the \ma{stilts.png}{STILTS} button in the toolbar.
         This will pop up a window with the STILTS command that will
         perform that cone search.
-  \item Note changing selections and controls in the Cone Search window
-        the settings of the displayed STILTS command.
+  \item Note that changing selections and controls in the Cone Search window
+        changes the settings of the displayed STILTS command.
   \item Copy and paste the text into a terminal and execute it
         (you can use the \mb{clipboard.png}{Edit}{Copy} button
         or do it by hand)
@@ -954,7 +971,7 @@ crossmatch and VO-related windows.
 \subsection{... and more}
 
 There is {\em lots} more that {\tt tpipe}, and STILTS in general, can do.
-Explore the manual!
+Explore \bhref{http://www.starlink.ac.uk/stilts/sun256/}{the manual}!
 
 
 \newpage
@@ -1140,7 +1157,7 @@ But you didn't need to know that to improve the data like this.
 % \begin{enumerate}
 % \item Unlike TOPCAT, you can't bluff your way through STILTS
 %       by pointing'n'clicking; you'll need some documentation.
-%       Find the manual at \turl{http://www.starlink.ac.uk/stilts/sun256/},
+%       Find the manual at \burl{http://www.starlink.ac.uk/stilts/sun256/},
 %       or just google for ``stilts'' and go to the \lab{Documentation} section.
 % \item Make sure you have it installed.  If you have topcat, you can
 %       run ``{\tt java -jar topcat-full.jar -stilts ...}''.
