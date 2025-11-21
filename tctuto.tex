@@ -35,9 +35,16 @@
 \newcommand{\lab}[1]{{\bf #1}}
 \newcommand{\ma}[2]{\buttimg{#1}~\lab{#2}}
 \newcommand{\mb}[3]{\buttimg{#1}~\lab{#2}$\mid$\lab{#3}}
-\newcommand{\entry}[2]{\lab{#1}: ``{\tt #2}''}
 \newcommand{\turl}[1]{{\color{blue}\url{#1}}}
 \newcommand{\paragap}{\vspace{1.5ex}}
+\newcommand{\entry}[2]{\lab{#1}: ``\texttt{#2}''}
+
+% Don't use \entry{a}{b} if the second parameter b has underscores,
+% because they won't be cut'n'pasteable from the PDF.
+% Instead you have to write manually \pentry{a} ``\verb|b|''.
+% This is annoying and there may be a more elegant solution,
+% but I didn't find it so far.
+\newcommand{\pentry}[1]{\lab{#1}: }
 
 \begin{document}
 \raggedright
@@ -434,7 +441,7 @@ TOPCAT's {\em expression language\/} can help.
   \begin{enumerate}
   \item Plot a colour-magnitude diagram:
         \mb{planeplot_button.png}{Graphics}{Plane Plot}, \\
-        \entry{X}{bp\_rp}, \entry{Y}{g\_abs}.
+        \pentry{X} ``\verb|bp_rp|'', \pentry{Y} ``\verb|g_abs|''.
   \item Use the \buttimg{axes_button.png} \lab{Axes} control,
         \lab{Coords} tab, \lab{Y~Flip} checkbox
         to flip it the right way round.
@@ -520,9 +527,10 @@ at J2016.0.
   \item Open the \mb{xmatch_button.png}{VO}{CDS Upload X-Match} window
   \item Fill in the fields:\\
         \entry{VizieR Table ID/Alias}{Gaia DR3 (Epoch 2016)} \\
-        \entry{Input Table}{J\_ApJS\_166\_549\_table2} \\
+        \pentry{Input Table} ``\verb|J_ApJS_166_549_table2|'' \\
         (or whatever the HST table is called) \\
-        \entry{RA column}{\_RAJ000}, \entry{Dec column}{\_DEJ2000}  \\
+        \pentry{RA column} ``\verb|_RAJ000|'',
+        \pentry{Dec column} ``\verb|_DEJ2000|''  \\
         (should be filled in automatically) \\
         \entry{Radius}{1} (arcsec) \\
         \entry{Find Mode}{All} \hspace{1em}{\em Important!}
@@ -547,15 +555,16 @@ at J2016.0.
   \begin{enumerate}
   \item Open a \mb{skyplot_button.png}{Graphics}{Sky Plot} window
   \item Plot the HST observations:
-        \entry{Table}{J\_ApJS\_166\_549\_table2},
-        \entry{Lon}{\_RAJ2000}, \entry{Lat}{\_DEJ2000}
+        \pentry{Table} ``\verb|J_ApJS_166_549_table2|'',
+        \pentry{Lon} ``\verb|_RAJ2000|'', \pentry{Lat} ``\verb|_DEJ2000|''
   \item Overplot the actual matches.
         Add a new {Pair} layer:
         \mb{pairs_button.png}{Layers}{Add Pair Control} and fill in:\\
         \entry{Table}{4xGAIA DR3}
               (or whatever the xmatch result table is called)
         and both sets of coordinates: \\
-        \entry{Lon(1)}{\_RAJ2000}, \entry{Lat(1)}{\_DEJ2000} (HST) \\
+        \pentry{Lon(1)} ``\verb|_RAJ2000|'',
+        \pentry{Lat(1)} ``\verb|_DEJ2000|'' (HST) \\
         \entry{Lon(2)}{RAdeg}, \entry{Lat(2)}{DEdeg} (Gaia)
   \item Zoom in to look at the associations.  There are too many!
         What is this plot telling you?
@@ -589,10 +598,12 @@ at J2016.0.
         Open \mb{cols_button.png}{Views}{Column Info} window, \\
         then define new columns using
         \mb{plus_button.png}{Columns}{New Synthetic Column}: \\
-        \entry{Name}{deltaRa}, \entry{Expression}{3600*(RAdeg - \_RAJ2000)},
-                               \entry{Units}{arcsec} \\
-        \entry{Name}{deltaDec}, \entry{Expression}{3600*(DEdeg - \_DEJ2000)},
-                                \entry{Units}{arcsec}
+        \entry{Name}{deltaRa},
+        \pentry{Expression} ``\verb|3600*(RAdeg - _RAJ2000)|'',
+        \entry{Units}{arcsec} \\
+        \entry{Name}{deltaDec},
+        \pentry{Expression} ``\verb|3600*(DEdeg - _DEJ2000)|'',
+        \entry{Units}{arcsec}
   \item Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window, \\
         plot \entry{X}{deltaRa}, \entry{Y}{deltaDec}
   \item Identify overdense region, select as in section~\ref{sec:blob},
@@ -996,12 +1007,14 @@ Lindegren et al.\ 2018 \cite{lindegren}.
   \item Add a new column calculating absolute G magnitude, using parallax:
         \mb{plus_button.png}{Columns}{New Synthetic Column} in
         \ma{cols_button.png}{Column Info} window:\\
-        \entry{Name}{g\_abs}, \\
-        \entry{Expression}{phot\_g\_mean\_mag + 5*log10(parallax/100)}, \\
+        \pentry{Name} ``\verb|g_abs|'', \\
+        \pentry{Expression}
+                ``\verb|phot_g_mean_mag + 5*log10(parallax/100)|'', \\
         \entry{Units}{mag}
         \label{item:calc-absmag}
   \item Make a \mb{planeplot_button.png}{Graphics}{Plane Plot}, with
-        \entry{X}{bp\_rp} ($BP-RP$ colour), \entry{Y}{g\_abs}
+        \pentry{X} ``\verb|bp_rp|'' ($BP-RP$ colour),
+        \pentry{Y} ``\verb|g_abs|''
         (absolute G magnitude).
         Use the \buttimg{axes_button.png} \lab{Axes} control,
         \lab{Coords} tab, \lab{Y~Flip} checkbox
@@ -1050,8 +1063,8 @@ But you didn't need to know that to improve the data like this.
   \raggedright
   \begin{enumerate}
   \item Open a new \mb{planeplot_button.png}{Graphics}{Plane Plot}, with
-        \entry{X}{bp\_rp} ($BP-RP$ colour),
-        \entry{Y}{phot\_bp\_rp\_excess\_factor}.
+        \pentry{X} ``\verb|bp_rp|'' ($BP-RP$ colour),
+        \pentry{Y} ``\verb|phot_bp_rp_excess_factor|''.
   \end{enumerate}
   The quantity on the Y axis is some measure of photometric reliability.
   High values are bad, but how high is colour-dependent.
@@ -1071,7 +1084,7 @@ But you didn't need to know that to improve the data like this.
   \item Create a new subset combining the two: \\
         \mb{plus_button.png}{Subsets}{New Subset} action: 
         \entry{Subset Name}{ok} \\
-        \entry{Expression}{astrom\_ok \&\& photom\_ok}
+        \pentry{Expression} ``\verb|astrom_ok && photom_ok|''
   \item Go back to the plot, and make sure only the {\tt ok}
         subset is plotted (\lab{Subsets} tab).
         Now there are fewer spurious sources.
