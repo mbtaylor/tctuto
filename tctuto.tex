@@ -892,22 +892,28 @@ on the command line, documented in Section 6.4: ``Output Modes'' of the manual.
       \postverb
 \end{enumerate}
 
+\newpage
 \subsection{Plot using STILTS}
 
-\begin{enumerate}
-\item Plot the cluster on the screen:
-      \preverb
-      \begin{verbatim}
-      stilts plot2sky in=cluster.fits layer1=mark lon=ra lat=dec
-      \end{verbatim}
-      \postverb
-      Note that this plot is interactive --- you can zoom and drag
-      it around as in a TOPCAT plot window.
-\item Create a plot graphics file.
-      Just add an output parameter like ``{\tt out=plot.png}'' or
-      ``{\tt out=plot.pdf}'' to the above {\tt plot2sky} command
-      to write static output files.
-\end{enumerate}
+\begin{minipage}[t]{12cm}
+  \begin{enumerate}
+  \item Plot the cluster on the screen:
+        \preverb
+        \begin{verbatim}
+  stilts plot2sky in=cluster.fits layer1=mark lon=ra lat=dec
+        \end{verbatim}
+        \postverb
+        Note that this plot is interactive --- you can zoom and drag
+        it around as in a TOPCAT plot window.
+  \item Create a plot graphics file.
+        Just add an output parameter like ``{\tt out=plot.png}'' or
+        ``{\tt out=plot.pdf}'' to the above {\tt plot2sky} command
+        to write static output files.
+  \end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{7cm}
+  \winfig{width=7cm}{stilts_plot.pdf}
+\end{minipage}
 
 
 \subsection{Get help from TOPCAT}
