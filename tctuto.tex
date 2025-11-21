@@ -120,6 +120,8 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   \item Examine the loaded table: look at the
         \mb{browser1.png}{Views}{Table Data} and
         \mb{cols_button.png}{Views}{Column Info} windows
+        (you can either go through the menus or find the right button
+        in the toolbar)
   \item Use the \mb{skyplot_button.png}{Graphics}{Sky Plot} window
         to see the positions on the sky.
   \item Play with the plot.  Note overdense regions are coloured darker.
@@ -172,7 +174,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
   \item Create an additional subset that contains the background objects,
         i.e.\ those not in the comoving set:
         click to select the \lab{comoving} row,
-        then select the \mb{invert_button}{Subsets}{Invert Subset} action.
+        then invoke the \mb{invert_button}{Subsets}{Invert Subset} action.
   \item A new subset \lab{not\_comoving} will appear;
         if you like you can rename it ``\lab{background}'' by double-clicking
         in the \lab{Name} field
@@ -293,9 +295,9 @@ So we need to make a more sophisticated query using TAP.
   \item Type in to the bottom panel some very simple ADQL:\\
         ``{\tt SELECT TOP 10 ra, dec FROM gaiadr3.gaia\_source}''
   \item Note that syntax errors (including partial or misspelt tables/columns)
-        are highlighted in red.
+        get highlighted in red.
   \item Hit \lab{Run Query} to run the query;
-        if successful a new table is loaded
+        if successful a new table will be loaded
   \end{enumerate}
 
   \subsection{Acquire astrometric data}
@@ -352,13 +354,14 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
   \raggedright
   \begin{enumerate}
   \item Open the \mb{fx_button}{Help}{Available Functions} browser to see
-        what functions TOPCAT provides (they are listed in the manual too).
+        what functions TOPCAT provides
+        (they are \tcmanref{generalJel}{listed in the manual} too).
   \item Look under the \lab{Gaia} entry to see astrometry-specific items
   \item We will use the {\tt astromUVW} and maybe {\tt icrsToGal}
         and {\tt astromXYZ} functions.
         The \lab{Examples} items in the function documentation are useful;
         for use with the {\tt gaia\_source} catalogue,
-        you can often just cut and paste
+        you can often just copy and paste
   \item Open the \mb{cols_button.png}{Views}{Column Info} window
         and choose the \mb{plus_button.png}{Columns}{New Synthetic Column}
         action
@@ -391,8 +394,6 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         \mb{plot2cube.png}{Graphics}{Cube Plot},
         \entry{Coordinates}{Vector},
         \entry{XYZ Vector}{uvw}.
-        Note, you can type in any expression for the plot coordinates,
-        you don't have to just select from available columns.
   \item Select \entry{Mode}{\buttimg{MODE_DENSITY.png}density}
         in the \lab{Form} tab.  You can change the colour map to taste
         using the \lab{Density Shader} selector.
@@ -405,7 +406,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         and right click (or CTRL-click) on a dense region to recenter.
   \item Navigate so only the objects in the overdense region
         (about 200 of them? see the count at the bottom right of the window)
-        are visible inside the wireframe --- these are the Hyades,
+        are visible inside the wireframe --- these should be the Hyades,
         which all have similar 3D velocities.
   \item Use \mb{spoints5.png}{Subsets}{Subset From Visible},
         \entry{Name}{hyades}, \lab{Add Subset}.
@@ -425,7 +426,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
   \begin{enumerate}
   \item Go back and plot this subset on the sky
         (\mb{skyplot_button.png}{Graphics}{Sky Plot})
-  \item Use the \lab{Subsets} tab to make sure both \lab{hyades}
+  \item Use the \lab{Subsets} tab to make sure that \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
         You might want to set \entry{Shading Mode}{flat} and
         fiddle with marker size and shape for clarity.
@@ -455,7 +456,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
   \item Use the \buttimg{axes_button.png} \lab{Axes} control,
         \lab{Coords} tab, \lab{Y~Flip} checkbox
         to flip it the right way round.
-  \item Use the \lab{Subsets} tab to make sure both \lab{hyades}
+  \item Use the \lab{Subsets} tab to make sure that \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
         Hyades should (mostly) sit on a nice tight main sequence!
   \item There are a few outliers.
@@ -485,7 +486,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
 \section{Match Gaia and HST observations}
 
 In this example we have a local catalogue from a publication
-by Gouliermis et al. 2006 \cite{gouliermis},
+by Gouliermis et al.\ 2006 \cite{gouliermis},
 available in VizieR as J/ApJS/166/549.
 This contains about 100\,000 sources observed by the ACS instrument
 on the Hubble Space Telescope at epoch $\approx$ J2004.6
@@ -507,7 +508,7 @@ at J2016.0.
   \item \entry{Radius}{1} (degrees)
   \item \entry{Maximum Row Count}{100000} (or some large number)
   \item Catalogue selection panel: \lab{By Keyword} tab
-  \item Fill in \entry{Keywords}{Gouliermis}
+  \item Enter in \entry{Keywords}{Gouliermis}
   \item Select ``{\tt J/ApJS/166/549}''
   \item Hit the \lab{OK} button at the bottom.
         A new table with 99\,079 rows should be loaded
@@ -543,7 +544,7 @@ at J2016.0.
         \pentry{Dec column} ``\verb|_DEJ2000|''  \\
         (should be filled in automatically) \\
         \entry{Radius}{1} (arcsec) \\
-        \entry{Find Mode}{All} \hspace{1em}{\em Important!}
+        \entry{Find Mode}{All} \hspace{1em}{\em $\longleftarrow$ Important!}
   \item Hit \lab{Go};
         within a few seconds, it should inform you that a new table has been
         loaded, with about 24\,000 rows.
@@ -616,7 +617,8 @@ at J2016.0.
         \entry{Units}{arcsec}
   \item Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window, \\
         plot \entry{X}{deltaRa}, \entry{Y}{deltaDec}
-  \item Identify overdense region, select as in section~\ref{sec:blob},
+  \item Identify overdense region, select by drawing a blob
+        as in section~\ref{sec:blob},
         define new subset \lab{true\_match}.
   \item Go back to the sky associations plot from the previous section,
         and use the \lab{Subsets} tab to visualise which are the true matches.
@@ -717,7 +719,8 @@ for later batch use like this is a common pattern of work.
       or maybe just google for ``stilts''
       and go to the \lab{Documentation} section.
 \item Make sure you have it installed.
-      ``{\tt java -jar stilts.jar ...}'' should work.
+      Running ``{\tt stilts}'' on its own may work; if not then
+      ``{\tt java -jar stilts.jar ...}'' should do.
       If you have topcat, you can run
       ``{\tt java -jar topcat-full.jar -stilts ...}'' instead.
       More convenient (on Un*x), download the {\tt stilts} script
@@ -747,7 +750,7 @@ for later batch use like this is a common pattern of work.
 \item Investigate the STILTS {\tt cone} command;
       see the \stiltsmanref{cone}{\texttt{cone} documentation}
       in Appendix~B of the manual
-      and run
+      or run
       \preverb
       \begin{verbatim}
       stilts cone help
