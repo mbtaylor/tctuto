@@ -78,8 +78,9 @@ stilts.jar:
 	curl -L http://www.starlink.ac.uk/stilts/stilts.jar >$@
 
 m4.fits:
-	$(STILTS) tpipe in='http://dc.zah.uni-heidelberg.de/gaia/q3/cone/scs.xml?RA=245.89675&DEC=-26.52575&SR=0.3&VERB=2' \
-               out=$@
+	$(STILTS) cone serviceurl='http://dc.g-vo.org/gaia/q3/cone/scs.xml?' \
+                       lon=245.89675 lat=-26.52575 radius=0.3 verb=2 \
+                       out=$@
 
 m4mini.fits: m4.fits
 	$(STILTS) tpipe in=m4.fits \
@@ -117,9 +118,14 @@ ngc346.fits:
                in='http://vizier.u-strasbg.fr/viz-bin/votable?-source=J%2fApJS%2f166%2f549&-oc.form=dec&-out.meta=DhuL&-c=14.771207+-72.1759&-c.rd=1.0&-out.add=_RAJ%2C_DEJ%2C_r&-out.max=100000' \
                out=$@
 
+# The ARI one is better (fewer columns) as long as it's not down.
+GAIA_CONE = http://gaia.ari.uni-heidelberg.de/cone/search?
+# GAIA_CONE = https://gea.esac.esa.int/tap-server/conesearch?TABLE=gaiadr3.gaia_source_lite&IDCOL=source_id&RACOL=ra&DECCOL=dec&
 ngc346-gaia.fits:
-	$(STILTS) tpipe in='http://gaia.ari.uni-heidelberg.de/cone/search?RA=14.771207&DEC=-72.1759&SR=0.05&VERB=1' \
-               out=$@
+	$(STILTS) cone \
+              serviceurl='$(GAIA_CONE)' \
+              lon=14.771207 lat=-72.1759 radius=0.05 verb=1 \
+              out=$@
 
 ngc346xEDR3.fits: ngc346.fits
 	$(STILTS) cdsskymatch \
