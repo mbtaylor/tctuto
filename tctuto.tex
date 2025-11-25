@@ -335,8 +335,8 @@ with observed radial velocities
 and good determinations of parallax.
 The fact that parallax error is $\leq$20\% means that it's OK
 to invert parallax to calculate distance and absolute magnitude.
-We are retrieving all the basic astrometric parameters and some
-photometry.
+We are retrieving all the basic astrometric parameters
+(enough for the 6-d phase space) and some photometry.
 \paragap
 
 The Hyades should be in there somewhere.  Can we find them?
@@ -530,7 +530,7 @@ available in VizieR as J/ApJS/166/549.
 This contains about 100\,000 sources observed by the ACS instrument
 on the Hubble Space Telescope at epoch $\approx$ J2004.6
 of stars in NGC346, a cluster in the Small Magellanic Cloud.
-We match these positions with positions in the main Gaia catalogue
+We match these positions with positions in the main Gaia DR3 catalogue
 at J2016.0.
 
 \subsection{Acquire HST observations}
@@ -588,7 +588,7 @@ at J2016.0.
         within a few seconds, it should inform you that a new table has been
         loaded, with about 24\,000 rows.
   \item Look at the columns of the new table (all HST followed by all Gaia)
-        in the \mb{cols_button.png}{Views}{Column Info} window
+        in the \mb{cols_button.png}{Views}{Column Info} window.
   \end{enumerate}
 \end{minipage}
 \begin{minipage}[t]{7.5cm}
@@ -665,8 +665,8 @@ at J2016.0.
   \item Make a colour-colour diagram combining HST and Gaia photometry: \\
         Use \mb{planeplot_button.png}{Graphics}{Plane Plot} window,
         plot \entry{X}{Vmag-Imag}, \entry{Y}{BPmag-RPmag},
-        display \lab{true\_match} subset only. \\
-        What are the two populations?
+        display \lab{true\_match} subset only.
+        % \\ What are the two populations?
         % looks like the main sequence and giant branch -
         % actually the V-I vs V plot is more revealing,
         % because the HST data goes much deeper(?)
@@ -692,7 +692,7 @@ at J2016.0.
         to a Gaia service as in
         section \ref{sec:m4-cone}, but this time fill in
         \entry{Object Name}{ngc346}, \entry{Radius}{0.05} (degrees).
-  \item Plot the Gouliermis (from VizieR) and Gaia (from Cone Search)
+  \item Plot the HST (from VizieR) and Gaia (from Cone Search)
         datasets on the sky:
         open the \mb{skyplot_button.png}{Graphics}{Sky Plot} window,
         fill in RA and Dec as \lab{Lat} and \lab{Lon} for one of the tables,
@@ -702,7 +702,7 @@ at J2016.0.
         from the main control window.
         Default \lab{Match Criteria} (Sky, 1 arcsec) are OK in this case.
         Fill in the \lab{Table 1} and \lab{Table 2} details for the
-        Gouliermis and Gaia tables.
+        HST and Gaia tables.
         Entry \entry{Match Selection}{All matches}.
   \item Hit \lab{Go} and wait a few seconds for the match to complete.
   \item When complete, a popup window will tell you, and offer to
@@ -828,7 +828,7 @@ and writes it to output, either to a file (in the same or different format)
 or some other destination.  It works like a Unix pipeline.
 \paragap
 
-The operations are defined by adding {\em filters} such as
+The operations are defined by adding {\em filters\/} such as
 ``\stiltsttref{select}'' (retain only some rows) or
 ``\stiltsttref{addcol}'' (add a new column).
 Filters are specified by adding using zero
@@ -838,7 +838,7 @@ and documented in
 of the STILTS manual.
 \paragap
 
-The default output mode is write to a file,
+The default {\em output mode\/} is write to a file,
 but other options such as
 ``\stiltsmanref{mode-meta}{\texttt{meta}}'' (display column metadata),
 ``\stiltsmanref{mode-count}{\texttt{count}}'' (count rows) and
@@ -872,7 +872,8 @@ on the command line, documented in
 \item For convenience, write a new table with only a few of the columns.
       The {\tt keepcols} filter produces a table with only the listed
       columns (the list is space-separated and needs to be quoted).
-      The {\tt clearparams} filter removes per-table metadata.
+      The {\tt clearparams} filter removes per-table metadata
+      which tends to clutter up the screen output.
       \preverb
       \begin{verbatim}
       stilts tpipe in=m4.fits cmd="keepcols 'ra dec pmra pmdec parallax'" cmd='clearparams *'
@@ -1042,9 +1043,7 @@ Lindegren et al.\ 2018 \cite{lindegren}.
   \item Choose \entry{Mode}{Asynchronous}
         (just above the ADQL text entry panel).
         This query may take a minute or two,
-        so a synchronous query might time out
-        (with the unhelpful result, probably,
-         ``{\em TAP response is not a VOTable}'').
+        so a synchronous query might time out.
   \item Execute the following query:
 \label{step:hrd-data}
     \begin{verbatim}
@@ -1059,7 +1058,7 @@ Lindegren et al.\ 2018 \cite{lindegren}.
     \end{verbatim}
     \vspace*{-3ex}
     You should get a table with 306\,517 sources;
-    they are nominally within 100\,pc, and have $\varpi$, BP and RP
+    they are nominally within 100\,pc, and have $\varpi$ (parallax), BP and RP
     with small errors.  In particular, the parallax error is small enough
     that $\varpi^{-1}$ is a reasonable estimate of distance.
   \end{enumerate}
@@ -1401,6 +1400,16 @@ Go back and reproduce all the other exercises using STILTS!
    ``A Gap in the Lower Main Sequence Revealed by Gaia Data Release 2'',
    ApJ Letts, 861, L11 (2018),
    {\tt 2018ApJ...861L..11J}
+\bibitem{2005ASPC..347...29T}
+   M.B.Taylor,
+   ``TOPCAT \&\ STIL: Starlink Table/VOTable Processing Software'',
+   ASP Conf.\ Ser.\ 347, 29 (2005),
+   {\tt 2005ASPC..347...29T}
+\bibitem{2006ASPC..351..666T}
+   M.B.Taylor,
+   ``STILTS --- A Package for Command-Line Processing of Tabular Data'',
+   ASP Conf.Ser.\ 351, 666 (2006),
+   {\tt 2006ASPC..351..666T}
 \end{thebibliography}
 
 \section*{Acknowledgements}
@@ -1412,6 +1421,10 @@ Data Processing and Analysis Consortium
 Funding for the DPAC
 has been provided by national institutions, in particular the institutions
 participating in the {\it Gaia} Multilateral Agreement.
+\paragap
+
+If you use TOPCAT or STILTS in your work, please consider citing
+\cite{2005ASPC..347...29T} or \cite{2006ASPC..351..666T}.
 
 
 \label{lastPage}
