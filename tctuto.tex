@@ -292,7 +292,7 @@ So we need to make a more sophisticated query using TAP.
   \item Select table {\tt gaiadr3.gaia\_source} and look at
         \lab{Table} and \lab{Columns} tabs,
         to see information about available columns.
-  \item Look in the \lab{Service} tab to see information about the service
+% \item Look in the \lab{Service} tab to see information about the service
   \item Look in the \lab{Hints} tab for a very basic ADQL cheat sheet
   \item Type in to the bottom panel some very simple ADQL:\\
         ``{\tt SELECT TOP 10 ra, dec FROM gaiadr3.gaia\_source}''
@@ -359,7 +359,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         what functions TOPCAT provides
         (they are \tcmanref{generalJel}{listed in the manual} too).
   \item Look under the \lab{Gaia} entry to see astrometry-specific items
-  \item We will use the {\tt astromUVW} and maybe {\tt icrsToGal}
+  \item We will use the {\tt astromUVW(astrom6)} and maybe {\tt icrsToGal}
         and {\tt astromXYZ} functions.
         The \lab{Examples} items in the function documentation are useful;
         for use with the {\tt gaia\_source} catalogue,
@@ -398,7 +398,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         \entry{XYZ Vector}{uvw}.
   \item Select \entry{Mode}{\buttimg{MODE_DENSITY.png}density}
         in the \lab{Form} tab.  You can change the colour map to taste
-        using the \lab{Density Shader} selector.
+        using the \lab{Shader} selector.
   \item Now, navigate through the cube to find an overdensity.
         This takes a bit of practice, but it's fun once you work out how.
         Click the little \buttimg{navig_help.png} button at bottom left
@@ -410,7 +410,7 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         (about 200 of them? see the count at the bottom right of the window)
         are visible inside the wireframe --- these should be the Hyades,
         which all have similar 3D velocities.
-  \item Use \mb{spoints5.png}{Subsets}{Subset From Visible},
+  \item Use \mb{spoints5.png}{Subsets}{Subset From Visible} action,
         \entry{Name}{hyades}, \lab{Add Subset}.
   \end{enumerate}
 \end{minipage}
@@ -422,35 +422,35 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
 
 
 \newpage
-\subsection{View positions}
 
-\begin{minipage}[t]{11cm}
+\begin{minipage}[t]{12cm}
+\raggedright
+
+\subsection{View positions}
+  \label{sec:hy-sky}
+
   \begin{enumerate}
   \item Go back and plot this subset on the sky
         (\mb{skyplot_button.png}{Graphics}{Sky Plot})
   \item Use the \lab{Subsets} tab to make sure that \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
         You might want to set \entry{Shading Mode}{flat} and
-        fiddle with marker size and shape for clarity.
+        fiddle with marker size and shape for clarity (in the \lab{Form} tab).
   \item To get an all-sky view,
         use the \buttimg{axes_button.png} \lab{Axes} control,
         \lab{Projection} tab, and change the \lab{Projection} selector
         from ``\lab{sin}'' to ``\lab{aitoff}''
   \item If you like, you can plot it in 3-d space as well:
-        \mb{plot2sphere.png}{Graphics}{Sphere Plot},\\
+        \mb{plot2sphere.png}{Graphics}{Sphere Plot},
         \entry{Lon}{ra},
         \entry{Lat}{dec},
         \entry{Radius}{1000./parallax}
+  \item Leave any plot windows open for later.
   \end{enumerate}
-\end{minipage}
-\begin{minipage}[t]{8cm}
-  \winfig{width=8cm}{hy_sky.png}
-\end{minipage}
+
+\vspace*{0.5cm}
 
 \subsection{Colour-magnitude diagram}
-
-\begin{minipage}[t]{11cm}
-  \raggedright
   \begin{enumerate}
   \item Plot a colour-magnitude diagram:
         \mb{planeplot_button.png}{Graphics}{Plane Plot}, \\
@@ -461,30 +461,64 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
   \item Use the \lab{Subsets} tab to make sure that \lab{hyades}
         and background objects (\lab{All}) are plotted in different colours.
         Hyades should (mostly) sit on a nice tight main sequence!
-  \item There are a few outliers.
-        Click on them, see the position show up in the sky plot too.
-        In some cases, you can see by sky position that they are non-members.
-        Open the \mb{browser1.png}{Views}{Data Window}
-        and see that the relevant row is highlighted when
-        you click on a plotted point.
   \end{enumerate}
 
-  \vspace*{2cm}
-  \subsection*{Bonus}
-  \begin{itemize}
-    \item Try refining the selection by localising in position space
-          or HR space too.
-    \item What is the mean distance to the Hyades?
-    \item You can also investigate outliers using the
-          \mb{activate_butt}{Views}{Activation Actions} window.
-          Try the \lab{Display HiPS cutout} option or,
-          if you have Aladin desktop running,
-          \lab{Send Sky Coordinates}.
-    \item Can you find any other clusters in velocity space?
-  \end{itemize}
+\vspace*{0.5cm}
+
+\subsection{Investigate outliers}
+
+There are some sources sitting off the main sequence.
+We will try to find more information about these.
+
+\begin{enumerate}
+\item In the \lab{Subsets} tab hide the \lab{All} subset
+      leaving just the \lab{hyades} visible.
+\item Now click on an outlier.  A little round cursor will appear on it.
+      The same cursor will identify that source in any other plots it
+      appears in, e.g.\ the sky plot from section \ref{sec:hy-sky}.
+      In some cases you can see by sky position that the source is a
+      non-member.
+\item Open the \mb{browser1.png}{Views}{Data Window}
+      and see that the relevant row is highlighted when
+      you click on a plotted point.
+      This works the other way round too, as long as the point is visible.
+\item You can make all sorts of other things happen when you click on
+      a plotted point (or row in the table window) as well.
+      Open the \mb{activate_butt}{Views}{Activation Actions} window
+      to see how these are controlled.
+\item Check the checkbox for \lab{Display HiPS Cutout}
+      and click again on a plotted point --- a little window
+      should pop up with a sky image centered on that source.
+      Click on the \lab{Display HiPS Cutout} item to configure it better,
+      e.g.\ \entry{Field of View}{1 arcmin},
+      or select a different \lab{HiPS Survey} to supply the imagery,
+      then click again on a plotted point to see it working.
+\item If Aladin Desktop is running, try the
+      \lab{Send Sky Coordinates} option too which uses a
+      communication protocol called SAMP;
+      Aladin should re-center on the source you've clicked on.
+      Aladin Lite can do the same thing too, but a bit of extra
+      setup is required to make it listen to SAMP.
+\end{enumerate}
+
+% \subsection*{Bonus}
+% \begin{itemize}
+%   \item Try refining the selection by localising in position space
+%         or HR space too.
+%   \item What is the mean distance to the Hyades?
+%   \item Can you find any other clusters in velocity space?
+% \end{itemize}
+
 \end{minipage}
-\begin{minipage}[t]{8cm}
-  \winfig{width=8cm}{hy_cmd.png}
+\begin{minipage}[t]{7.5cm}
+  \vspace*{-0.5cm}
+  \winfig{width=7.5cm}{hy_sky.png}
+  \\[0.5cm]
+
+  \winfig{width=7.5cm}{hy_cmd.png}
+  \\[0.5cm]
+
+  \winfig{width=7.5cm}{hy_activate.png}
 \end{minipage}
 
 \newpage
