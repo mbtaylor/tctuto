@@ -1,0 +1,21 @@
+Suggested plan for a 2 hour tutorial:
+
+   - Start with a 10 minutes introduction
+      - What is TOPCAT, what it does, what it doesn't do
+      - What is STILTS
+      - What is the virtual observatory
+      - What is Gaia
+      - How the tutorial will be run
+
+   - For each section:
+      - 15-20 minutes: let the students follow the script
+      - 5-10 minutes: tutor goes through the exercise at fairly high speed
+           showing what it should look like
+
+Probably 4 sections is the most that's feasible in two hours.
+If you have longer, you might want to allow more time for each section.
+You can choose if you want to include STILTS or not.
+
+Other ways to run it are possible, e.g. tutor goes through the whole
+thing in detail, either with or without simultaneous hands-on from
+students.
