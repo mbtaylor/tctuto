@@ -20,5 +20,6 @@ you can find a pre-built PDF for at least one snapshot on the github
 This tutorial was originally developed (in various versions)
 for the series of VO-Schools run by the EU-funded ASTERICS project.
 
-This work is openly licensed via
+License:
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+[![License: CC BY 4.0](https://licensebuttons.net/l/by/4.0/80x15.png)](https://creativecommons.org/licenses/by/4.0/)
