@@ -312,7 +312,7 @@ So we need to make a more sophisticated query using TAP.
   and run this query:
   \begin{verbatim}
     SELECT ra, dec, pmra, pmdec, parallax,
-           radial_velocity, bp_rp,
+           radial_velocity, ruwe, bp_rp,
            phot_g_mean_mag + 5*log10(parallax/100) as g_abs
     FROM gaiadr3.gaia_source
     WHERE parallax > 15

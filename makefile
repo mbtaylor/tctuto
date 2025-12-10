@@ -93,8 +93,8 @@ hy.fits:
             sync=true \
             tapurl=https://gea.esac.esa.int/tap-server/tap \
             adql="SELECT ra, dec, pmra, pmdec, parallax, radial_velocity, \
+                         ruwe, bp_rp, \
                          phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, \
-                         bp_rp, \
                          phot_g_mean_mag + 5*log10(parallax/100) as g_abs \
                   FROM gaiadr3.gaia_source \
                   WHERE parallax > 15 \
