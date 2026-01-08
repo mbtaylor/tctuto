@@ -17,5 +17,6 @@ If you have longer, you might want to allow more time for each section.
 You can choose if you want to include STILTS or not.
 
 Other ways to run it are possible, e.g. tutor goes through the whole
-thing in detail, either with or without simultaneous hands-on from
-students.
+thing in detail, at about 15-20 minutes per section.
+In that case the students can optionally attempt to follow hands-on
+simultaneously, or they can have a few minutes at the end to have a go.
