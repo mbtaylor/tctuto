@@ -14,9 +14,8 @@ PDFLATEX = pdflatex
 # the tutorial.  You don't have to build these, but if you do, then
 # it's still possible to run much of the tutorial with no network access.
 DATA = m4.fits hy.fits hy3d.fits \
-       ngc346.fits ngc346-gaia.fits ngc346xEDR3.fits \
-       hrd-100pc.fits hrd-66pc.fits \
-       hrd.fits hrd_clean.fits \
+       ngc346.fits ngc346-gaia.fits ngc346xDR3.fits \
+       hrd-100pc.fits hrd_clean.fits \
        m4mini.fits
 
 # Name of repository.  Only used to annotate the generated document,
@@ -119,17 +118,17 @@ ngc346.fits:
                out=$@
 
 # The ARI one is better (fewer columns) as long as it's not down.
-GAIA_CONE = http://gaia.ari.uni-heidelberg.de/cone/search?
-# GAIA_CONE = https://gea.esac.esa.int/tap-server/conesearch?TABLE=gaiadr3.gaia_source_lite&IDCOL=source_id&RACOL=ra&DECCOL=dec&
+# GAIA_CONE = http://gaia.ari.uni-heidelberg.de/cone/search?
+GAIA_CONE = https://gea.esac.esa.int/tap-server/conesearch?TABLE=gaiadr3.gaia_source_lite&IDCOL=source_id&RACOL=ra&DECCOL=dec&
 ngc346-gaia.fits:
 	$(STILTS) cone \
               serviceurl='$(GAIA_CONE)' \
               lon=14.771207 lat=-72.1759 radius=0.05 verb=1 \
               out=$@
 
-ngc346xEDR3.fits: ngc346.fits
+ngc346xDR3.fits: ngc346.fits
 	$(STILTS) cdsskymatch \
-               cdstable='GAIA EDR3' find=all \
+               cdstable='I/355/gaiadr3' find=all \
                in=ngc346.fits ra=_RAJ2000 dec=_DEJ2000 radius=1 \
                out=$@
 
@@ -141,34 +140,16 @@ hrd-100pc.fits:
                          phot_g_mean_mag + 5*log10(parallax/100) as mg, \
                          astrometric_excess_noise, \
                          phot_bp_rp_excess_factor \
-                  FROM gaiadr2.gaia_source \
+                  FROM gaiadr3.gaia_source \
                   WHERE parallax > 10 \
                     AND parallax_over_error > 10 \
                     AND phot_bp_mean_flux_over_error > 10 \
                     AND phot_rp_mean_flux_over_error > 10" \
             out=$@
 
-hrd-66pc.fits:
-	$(STILTS) tapquery \
-            sync=false \
-            tapurl=https://gea.esac.esa.int/tap-server/tap \
-            adql="SELECT ra, dec, parallax, phot_g_mean_mag, bp_rp, \
-                         phot_g_mean_mag + 5*log10(parallax/100) as mg, \
-                         astrometric_excess_noise, \
-                         phot_bp_rp_excess_factor \
-                  FROM gaiadr2.gaia_source \
-                  WHERE parallax > 15 \
-                    AND parallax_over_error > 10 \
-                    AND phot_bp_mean_flux_over_error > 10 \
-                    AND phot_rp_mean_flux_over_error > 10" \
-            out=$@
-
-hrd.fits: hrd-100pc.fits
-	ln -s hrd-100pc.fits $@
-
-hrd_clean.fits: hrd.fits
+hrd_clean.fits: hrd-100pc.fits
 	stilts tpipe \
-               in=hrd.fits \
+               in=hrd-100pc.fits \
                cmd='addcol g_abs "phot_g_mean_mag + 5*log10(parallax/100)"' \
                cmd='select "astrometric_excess_noise < 1"' \
                cmd='select "phot_bp_rp_excess_factor < \
@@ -178,7 +159,8 @@ hrd_clean.fits: hrd.fits
 
 figures/hrd_only.png: hrd_clean.fits
 	stilts plot2plane \
-               insets=-4,-4,-4,-4 minor=false xpix=600 ypix=500 yflip=true \
+               insets=-6,-6,-6,-6 minor=false xpix=600 ypix=500 yflip=true \
+               shadow=false \
                densemap=heat denseclip=0.07,1 \
                layer1=mark in1=hrd_clean.fits x1=bp_rp y1=mg shading1=density \
                out=$@
