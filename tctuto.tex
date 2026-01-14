@@ -32,7 +32,7 @@
            {\vspace*{-0.5cm}
             \hspace*{0.5cm}\mbox{\vtop{\hbox{\includegraphics[#1]
                                                              {figures/#2}}}}}
-\newcommand{\lab}[1]{{\bf #1}}
+\newcommand{\lab}[1]{\textbf{#1}}
 \newcommand{\ma}[2]{\buttimg{#1}~\lab{#2}}
 \newcommand{\mb}[3]{\buttimg{#1}~\lab{#2}$\mid$\lab{#3}}
 \newcommand{\burl}[1]{{\color{blue}\texttt{\url{#1}}}}
@@ -399,6 +399,11 @@ TOPCAT's \tcmanref{jel}{\em expression language\/} can help.
         \mb{plot2cube.png}{Graphics}{Cube Plot},
         \entry{Coordinates}{Vector},
         \entry{XYZ Vector}{uvw}.
+        \\
+        \textit{\textbf{Note:} TOPCAT versions 4.9 and earlier don't have the
+          \lab{Coordinates} control; in that case enter
+          \texttt{uvw[0]}, \texttt{uvw[1]}, \texttt{uvw[2]} in the
+          \lab{X}, \lab{Y}, \lab{Z} fields.}
   \item Select \entry{Mode}{\buttimg{MODE_DENSITY.png}density}
         in the \lab{Form} tab.  You can change the colour map to taste
         using the \lab{Shader} selector.
@@ -988,6 +993,11 @@ to what you see in the GUI.
 Look out for the \ma{stilts.png}{STILTS} control in the control stack
 bottom left of the plot windows, and in the tool bars for
 crossmatch and VO-related windows.
+\paragap
+
+\textit{\textbf{Note:} TOPCAT versions 4.10 and earlier don't have
+  the STILTS interoperability features described here for Cone Search etc,
+  only for plotting windows.}
 \paragap
 
 \begin{minipage}[t]{12cm}
