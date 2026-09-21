@@ -24,6 +24,7 @@
 
 \definecolor{brown}{rgb}{0.5,0.25,0.0}
 \definecolor{grey}{rgb}{0.6,0.6,0.6}
+\definecolor{pink}{rgb}{1.0,0.75,0.75}
 
 \newcommand{\buttimg}[1] % filename
            {\mbox{\vtop{\vskip-2ex\hbox{\includegraphics[height=3ex]
@@ -300,7 +301,8 @@ So we need to make a more sophisticated query using TAP.
   \item Type in to the bottom panel some very simple ADQL:\\
         ``{\tt SELECT TOP 10 ra, dec FROM gaiadr3.gaia\_source}''
   \item Note that syntax errors (including partial or misspelt tables/columns)
-        get highlighted in red.
+        get highlighted \colorbox{pink}{{\tt in red}} --- click
+        \ma{warning_button.png}{Parse Errors} button for details.
   \item Hit \lab{Run Query} to run the query;
         if successful a new table will be loaded
   \end{enumerate}
