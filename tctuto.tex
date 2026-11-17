@@ -1094,7 +1094,10 @@ Lindegren et al.\ 2018 \cite{lindegren}.
         \pentry{Name} ``\verb|g_abs|'', \\
         \pentry{Expression}
                 ``\verb|phot_g_mean_mag + 5*log10(parallax/100)|'', \\
-        \entry{Units}{mag}
+        \entry{Units}{mag}\\
+        (Note that the {\tt parallax} column in the Gaia source catalogue
+        is given in milliarcsec not arcsec, which is why this expression may
+        not look as expected)
         \label{item:calc-absmag}
   \item Make a \mb{planeplot_button.png}{Graphics}{Plane Plot}, with
         \pentry{X} ``\verb|bp_rp|'' ($BP-RP$ colour),
