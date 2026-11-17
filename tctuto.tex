@@ -269,7 +269,9 @@ since the Hyades is very delocalised on the sky, because it's so close,
 so a cone would contain way too many sources.
 So we need to make a more sophisticated query using TAP.
 
+\vspace*{-0.3cm}
 \subsection{Locate Gaia TAP service}
+\vspace*{-0.2cm}
 
 \begin{minipage}[t]{11cm}
   \raggedright
@@ -285,6 +287,7 @@ So we need to make a more sophisticated query using TAP.
   \item Hit the \lab{Use Service} button at the bottom
   \end{enumerate}
 
+  \vspace*{-0.3cm}
   \subsection{Explore the TAP service}
 
   Use the TAP window to explore the tables that are present and
@@ -308,6 +311,7 @@ So we need to make a more sophisticated query using TAP.
         if successful a new table will be loaded
   \end{enumerate}
 
+  \vspace*{-0.3cm}
   \subsection{Acquire astrometric data}
 
   In the TAP window, open a new query tab using the
@@ -323,7 +327,6 @@ So we need to make a more sophisticated query using TAP.
     AND radial_velocity IS NOT NULL
   \end{verbatim}
   \vspace*{-2ex}
-  The result should contain about 60\,000 rows.
 \end{minipage}
 \begin{minipage}[t]{8cm}
   \winfig{width=8cm}{hy_tapsel.png}
@@ -332,6 +335,11 @@ So we need to make a more sophisticated query using TAP.
 
   \winfig{width=8cm}{hy_tapex.png}
 \end{minipage}
+
+The result should contain about 60\,000 rows.
+If the row count in the main window is marked ``{\sf (OVERFLOW)}'',
+increase the \lab{Max Rows} value in the middle of the TAP window
+(e.g.\ type in ``{\tt 100000}'') and try again.
 \paragap
 
 The query is for all the nearby sources
