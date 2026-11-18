@@ -65,7 +65,7 @@
 
 \begin{description}
   \item[TOPCAT:] \burl{http://www.starlink.ac.uk/topcat/}
-                 {\em (version 4.10-2 or later recommended)}
+                 {\em (version 4.10-4 or later recommended)}
   \item[STILTS:] \burl{http://www.starlink.ac.uk/stilts/}
                  {\em (version 3.4-1 or later recommended)}
   \item[Mailing list:] {\tt topcat-user@jiscmail.ac.uk}
@@ -261,6 +261,7 @@ the stars in the globular cluster Messier 4 (M4, or NGC 6121).
 \newpage
 
 \section{Cluster identification \#2: Hyades in 3-D velocity space using TAP}
+\label{sec:cluster3d}
 
 This example locates the Hyades open cluster in 3-dimensional velocity space,
 using Gaia's proper motion and radial velocity observations.
@@ -632,7 +633,7 @@ at J2016.0.
         \pentry{Table} ``\verb|J_ApJS_166_549_table2|'',
         \pentry{Lon} ``\verb|_RAJ2000|'', \pentry{Lat} ``\verb|_DEJ2000|''
   \item Overplot the actual matches.
-        Add a new {Pair} layer:
+        Add a new \lab{Pair} layer:
         \mb{pairs_button.png}{Layers}{Add Pair Control} and fill in:\\
         \entry{Table}{4xGAIA DR3}
               (or whatever the xmatch result table is called)
@@ -1045,6 +1046,154 @@ crossmatch and VO-related windows.
 There is {\em lots} more that {\tt tpipe}, and STILTS in general, can do.
 Explore \bhref{http://www.starlink.ac.uk/stilts/sun256/}{the manual}! \\
 Or try to replicate the other exercises using STILTS.
+
+\newpage
+\section{Motions of Bright Stars}
+\label{sec:bright}
+
+In this example we will examine the motion of stars in the sky down
+to 6th magnitude, as retrieved from Gaia.
+We will use the expression language and interactively adjustable
+{\bf global variables}
+Global variables, conventionally named \verb|var$x| or similar,
+are variables that can be used in the expression language
+(e.g.\ for calculating new columns, subsets or plotted quantities)
+and adjusted interactively in the GUI.
+
+\paragap
+{\bf Note:} Global variables are a relatively new feature in TOPCAT;
+you will need TOPCAT v4.10-4 (July 2025) or later.
+You can check your version with the \mb{tc_sok_24}{Help}{About TOPCAT}
+menu item.
+
+\subsection{Acquire bright star data}
+
+\raggedright
+\begin{enumerate}
+  \item Open the \ma{tap_button.png}{TAP Window}
+        and find the Gaia TAP service
+        as in Section \ref{sec:cluster3d}.
+  \item Execute the query
+        \begin{verbatim}
+  SELECT source_id, ra, dec, parallax, pmra, pmdec,
+         radial_velocity, phot_g_mean_mag
+  FROM gaiadr3.gaia_source
+  WHERE phot_g_mean_mag < 6
+        \end{verbatim}
+        \vspace*{-2ex}
+        This retrieves all the Gaia sources with G magnitudes up to 6.
+        Note that a few of the very brightest stars in the sky
+        are not present, since Gaia has trouble observing them.
+  \item Plot them in a \ma{skyplot_button.png}{Sky Plot}
+\end{enumerate}
+
+\subsection{Create and view a brightest selection}
+
+\begin{minipage}[t]{11cm}
+\raggedright
+\begin{enumerate}
+  \item Open the \mb{subsets_button.png}{Views}{Row Subsets} window
+  \item Create a \mb{Plus1.png}{Subsets}{New Subset} with
+        \entry{Subset Name}{bright},
+        \pentry{Expresson} ``\verb|phot_g_mean_mag < 5|''.
+        This creates a new subset including only those down to 5th magnitude.
+  \item Plot only the \lab{bright} subset:
+        in the Sky Plot window (already open or open a new one)
+        go to the \lab{Subsets} tab and uncheck \lab{All},
+        leaving only \lab{bright} visible.
+\end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{bright_subsets.png}
+\end{minipage}
+
+\subsection{Make the selection interactively variable}
+
+\begin{minipage}[t]{11cm}
+\raggedright
+We now adjust the magnitude threshold to use an existing
+\lab{Global Variable} \verb|var$x|, which we can adjust interactively:
+\begin{enumerate}
+  \item Edit the magnitude threshold expression;
+        in the \ma{subsets_button.png}{Subsets Window}
+        double-click on the Expression entry for the ``{\tt bright}'' entry
+        to edit, and replace it with
+        ``\verb|phot_mean_mag_g < var$x|''
+  \item The plotted points will disappear, since \verb|var$x| is zero
+        by default.
+  \item Open the \mb{sliders.png}{File}{Global Variables} window
+        and select {\bf\verb|var$x|} on the left.
+        Edit the \lab{Slider Range} so the limits are \lab{1.0} to \lab{6.0}.
+        Now you can use the slider at the bottom to dynamically change the
+        threshold, controlling how many stars are displayed in the sky plot.
+\end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{bright_global_x.png}
+\end{minipage}
+
+\newpage
+\subsection{Calculate future positions}
+
+\raggedright
+\begin{enumerate}
+  \item In the \ma{sliders.png}{Global Variable window}
+        create a new variable \mb{Plus1.png}{Variables}{Add New Variable}
+        with
+        \pentry{Name} ``\verb|var$t|'',
+        \entry{Type}{Floating point}.
+        Give it a range of 0--50\,000 (years).
+        Slide the slider to some intermediate value.
+  \item In the \ma{cols_button.png}{Column Info} window,
+        create a new column giving epoch propagated astrometry:\\
+        \mb{plus_button.png}{Columns}{New Synthetic Column}:\\
+        \entry{Name}{futurePos}, \\
+        \pentry{Expression}
+ ``\verb|epochProp(var$t, array(ra,dec,parallax,pmra,pmdec,radial_velocity))|''.
+        \\
+        This is an array-valued column, the first two elements
+        {\tt futurePos[0]} and {\tt futurePos[1]} give the RA and Dec
+        \verb|var$t| years in the future.
+        The {\tt epochProp} function is documented in
+       \bhref{http://www.starlink.ac.uk/topcat/sun253/Gaia.html\#Gaia-epochProp}
+             {Section B.1.11} of the manual,
+        and in the \lab{Gaia} section of the
+        \ma{fx_button}{AvailableFunctions} window.
+  \item Find the new column in the
+        \mb{tablebrowser_button.png}{Views}{Table Data} window
+        (probably the last column).
+        Slide the \verb|var$t| slider and see the values change.
+\end{enumerate}
+
+\subsection{Visualise the proper motions}
+
+\begin{minipage}[t]{11cm}
+\raggedright
+\begin{enumerate}
+  \item In the Sky Plot window add a new \lab{Pairs} layer:
+        \mb{pairs_button.png}{Layers}{Add Pair Control} and fill in:\\
+        \pentry{Table} [whatever the bright stars table is called] \\
+        and both sets of coordinates: \\
+        \pentry{Lon(1)} ``\verb|ra|'', \pentry{Lat(1)} ``\verb|dec|'' \\
+        \entry{Lon(2)}{futurePos[0]}, \entry{Lat(2)}{futurePos[1]} \\
+  \item In the \lab{Subsets} tab, select \lab{bright} but not \lab{All},
+        to match the existing Position layer
+  \item In the \lab{Form} tab, use the \ma{Plus1}{Forms} menu to add
+        a \ma{mark2_button.png}{Mark2} form alongside the existing
+        \ma{FORM_LINK2.png}{Link2} one,
+        adjust \lab{Shape} and \lab{Size} to taste
+  \item Now you can use the \verb|var$t| slider to visualise star positions
+        in the future.
+        Independently, you can use the \verb|var$x| slider to change
+        the brightness threshold.
+  \item One annoyance is that every time \verb|var$t| is changed,
+        the view zooms out again.  To stop that happening,
+        select the \mb{axlock}{Plot}{Lock Axes} action.
+\end{enumerate}
+\end{minipage}
+\begin{minipage}[t]{8cm}
+  \winfig{width=8cm}{bright_plot.png}
+\end{minipage}
 
 
 \newpage
